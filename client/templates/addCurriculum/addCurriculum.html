@@ -1,0 +1,220 @@
+<template name="curriculumBuilder">
+ <div class="container">
+  <div class="row">
+    <div class="row">
+      <div class=" input-field col l6 m6">
+        <label for="condition">Condition</label>
+        <input type="text" id="condition" class="no-reset"/>
+      </div>
+      <div class=" input-field col l6 m6">
+        <label for="curriculumTitle">Title </label>
+        <input type="text" id="curriculumTitle" class="no-reset"/>
+      </div>
+      <div class="input-field col l6 m6">
+        <button id="submitCurriculum" class="btn red large"> SUBMIT CURRICULUM </button>
+      </div>
+    </div>
+    <div class="row">
+      <button data-target="addLessonModal" style="width:100%" class='modal-trigger btn'  id="addLesson">Add Lesson <i class="mdi-content-add"></i></button>
+    </div>
+      <div class="row">
+        <div class="col l8 m8">
+          <ul class="collapsible" id="lessonsList" data-collapsible="expandable">
+          </ul>
+        </div>
+      </div>
+  </div>
+ </div>
+
+<div id="addLessonModal" class="modal">
+  <div class="modal-content">  
+    <form action="#" id="addLessonForm">
+      <div class="row">
+        <div class="input-field col l6 m6 ">
+          <label for="lessonTitle">Title</label>
+          <input type="text" id="lessonTitle">  
+        </div>
+        <div class="input-field col l6 m6 ">
+          <label for="lessonShortTitle">Short Title</label>
+          <input type="text" id="lessonShortTitle">  
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="input-field col l12 m12 ">
+          <label for="lessonTags">Tags (separate each tag by a single space)</label>
+          <input type="text" id="lessonTags" class="materialize-textarea">  
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col l12 m12">
+          <label for="lessonImage" class="file-input"> Image </label>
+            <input type="file" id="lessonImage" class="file ">
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">  
+    <button name="upload" id="submitLesson" class="waves-effect btn-flat waves-green modal-action modal-close"> Submit Lesson</button>
+  </div>
+</div>
+
+{{>addModuleModal}}
+</template>
+
+<template name="addModuleModal">
+<div id="addModuleModal" class="modal">
+  <div class="modal-content">  
+    <input class="hidden" id="moduleLessonId" value="">
+    
+    <form action="#" id="moduleInitialization">
+    
+        <div class="row">
+          <div class="input-field col l6 m6 ">
+          <label for="moduleType">Module Type</label>
+          <br/>
+          <select id="moduleType">
+            <option value="" id="default-select" disabled selected >Module Type</option>
+            <option value="SCENARIO"> Scenario </option>
+            <option value="MULTIPLE_CHOICE"> Multiple Choice </option>
+            <option value="GOAL_CHOICE"> Goal Choice </option>
+            <option value="BINARY"> Binary Choice </option>
+            <option value="SLIDE"> Slide </option>
+            <option value="VIDEO"> Video </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div name="attributeRow" class="input-field col l12 m12 VIDEO SLIDE BINARY MULTIPLE_CHOICE GOAL_CHOICE SCENARIO hidden">
+          <label for="moduleTags">Tags (separate each tag by a single space)</label>
+          <input type="text" id="moduleTags" class="materialize-textarea">  
+        </div>
+      </div>
+    </form>
+      
+    <form action="#" id="moduleAttributes">
+<div class="row">
+        <div name="attributeRow" class="attributeRow input-field col l12 m12 SLIDE VIDEO hidden">
+          <label for="moduleTitle">Title</label>
+          <input type="text" id="moduleTitle"/>  
+        </div>
+      </div>
+      
+      <div class="row">
+        <div name="attributeRow" class="input-field col l12 m12 BINARY MULTIPLE_CHOICE GOAL_CHOICE SCENARIO hidden">
+          <label for="moduleQuestion">Question</label>
+          <input type="text" class="materialize-textarea" id="moduleQuestion">  
+        </div>
+      </div>
+
+      <div name="attributeRow" class="row BINARY hidden">
+        <p> Select the CORRECT answer </p>
+        <div class="row">
+          <input id="No" name="binary_answer" type="radio" value="NO">
+          <label for="No"> NO </label>
+        </div>
+        <div class="row">
+          <input id="Yes" name="binary_answer" type="radio" value="YES">
+          <label for="Yes"> YES</label>
+        </div>
+      </div>
+
+
+      <div name="attributeRow" class="row SCENARIO hidden">
+        <p> Select the CORRECT answer </p>
+        <p>
+          <input id="Normal" name="scenario_answer" type="radio" value="normal">
+          <label for="Normal"> Normal</label>
+        </p>
+        <p>
+          <input id="CallDoc" name="scenario_answer" type="radio" value="Call Doc">
+          <label for="CallDoc"> Call Doctor </label>
+        </p>
+        <p>
+          <input id="Call911" name="scenario_answer" type="radio" value="Call 911">
+          <label for="Call911"> Call 911 </label>
+        </p>
+      </div>
+
+      <div  name="attributeRow" class=" row MULTIPLE_CHOICE GOAL_CHOICE hidden">
+        <p>Options (Select if correct) </p>
+        <div class="row uploadOption">
+          <!--<input type="checkbox" name="option" id="0">  -->
+          <label for="option1" class="optionCheckbox"> 
+            <input type="file" name="option" class="file ">
+          </label>
+        </div>
+        <div class="row uploadOption">
+          <!--<input type="checkbox" name="option" id="1">  -->
+        <label for="option2" class="optionCheckbox">
+            <input type="file" name="option" class="file ">
+          </label>
+        </div>
+        <div class="row uploadOption">
+          <!--<input type="checkbox" name="option" id="2">  -->
+          <label for="option3" class="optionCheckbox">
+            <input type="file" name="option" class="file ">
+          </label>
+        </div>
+        <div class="row uploadOption">
+          <!--<input type="checkbox" name="option" id="3">  -->
+          <label for="option4" class="optionCheckbox">
+            <input type="file" name="option" class="file ">
+          </label>
+        </div>
+        <div class="row uploadOption">
+          <!--<input type="checkbox" name="option" id="4">  -->
+          <label for="option5" class="optionCheckbox">
+            <input type="file" name="option" class="file ">
+          </label>
+        </div>
+        <div class="row uploadOption">
+          <!--<input type="checkbox" name="option" id="5">  -->
+          <label for="option6" class="optionCheckbox">
+            <input type="file" name="option" class="file ">
+          </label>
+        </div>
+      </div>
+
+      <div  name="attributeRow" class="row SLIDE SCENARIO MULTIPLE_CHOICE GOAL_CHOICE BINARY hidden">
+        <div class="col l12 m12">
+          <label class="file-input"  for="moduleAudio"> Audio </label>
+            <input type="file" id="moduleAudio" class="file ">
+        </div>
+      </div>
+
+      <div name="attributeRow" class="row SCENARIO MULTIPLE_CHOICE GOAL_CHOICE BINARY hidden">
+        <div class="col l12 m12">
+          <label class="file-input" for="moduleCorrectAudio"> Correct Audio </label>
+            <input type="file" id="moduleCorrectAudio" class="file ">
+        </div>
+      </div>
+      <div name="attributeRow" class="row SCENARIO MULTIPLE_CHOICE GOAL_CHOICE BINARY hidden">
+        <div class="col l12 m12">
+          <label  class="file-input"  for="moduleIncorrectAudio"> Incorrect Audio </label>
+            <input type="file" id="moduleIncorrectAudio" class="file ">
+        </div>
+      </div>
+      
+      <div name="attributeRow" class="row SLIDE SCENARIO BINARY hidden">
+        <div class="col l12 m12">
+          <label for="moduleImage" class="file-input"> Image </label>
+            <input type="file" id="moduleImage" class="file ">
+        </div>
+      </div>
+
+      <div name="attributeRow"  class="row VIDEO hidden">
+        <div class="col l12 m12">
+          <label for="moduleVideo" class="file-input"> Video </label>
+            <input type="file" id="moduleVideo" class="file ">
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">  
+    <button id="submitModule" name="upload" class="waves-effect btn-flat waves-green modal-action modal-close"> Submit Module </button>
+  </div>
+</div>
+</template>
