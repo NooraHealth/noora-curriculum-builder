@@ -1,0 +1,16 @@
+<template name="nav">
+
+<!--<div class="btn-floating" style="top: 45px; left: 45px">-->
+  <!--<a href="{{pathFor 'home'}}"><img class="circle" alt="Noora Health" src="/NHlogo.png"  style="max-width: 40px"/></a>-->
+  <!--</div>-->
+  <nav>
+    <div class="nav-wrapper">
+      <ul class="right">
+        <!--<li><a id="at-nav-btn">Logout</a></li>-->
+        <li><a onClick="Meteor.logout()"><i class="mdi-action-exit-to-app"></i></a></li>
+        <!--<li>{{>atNavButton}}</li>-->
+      </ul>
+    </div>
+
+  </nav>
+</template>

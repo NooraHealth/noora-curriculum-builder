@@ -5,7 +5,7 @@ Template.addModuleModal.helpers {
 }
 
 
-Template.createCurriculum.events {
+Template.curriculumBuilder.events {
   "click button[name=upload]":(event, template) ->
     event.preventDefault()
     console.log "sending the file"
@@ -197,7 +197,7 @@ Template.addModuleModal.events {
     $(event.taddrget).closest("input.file").toggleClass "correct"
 }
 
-Template.createCurriculum.onRendered ()->
+Template.curriculumBuilder.onRendered ()->
   $("select").material_select()
 
 resetForm = () ->
