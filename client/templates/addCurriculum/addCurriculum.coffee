@@ -8,7 +8,6 @@ Template.addModuleModal.helpers {
 Template.curriculumBuilder.events {
   "click button[name=upload]":(event, template) ->
     event.preventDefault()
-    console.log "sending the file"
 
     inputs =  $("input.file")
 
@@ -48,7 +47,6 @@ Template.curriculumBuilder.events {
 
     lesson = Lessons.update {_id: _id}, {$set: {nh_id: _id}}
 
-    console.log Lessons.findOne {_id: _id}
     $("#lessonsList").append "<li name='lesson' id='#{_id}'>
       <div class='collapsible-header'>
       #{title}  
@@ -204,7 +202,6 @@ resetForm = () ->
 
   addModuleModal = $("#addModuleModal")
   for input in addModuleModal.find("div[name=attributeRow]")
-    console.log "Sliding up!: ", input
     $(input).slideUp()
 
   #$("#default-select").attr "disabled", true
@@ -212,7 +209,6 @@ resetForm = () ->
 
     
   for input in $("input:not(.no-reset)")
-    console.log "clearding: ", input
     input.value = ""
 
 isQuestion = (type)->

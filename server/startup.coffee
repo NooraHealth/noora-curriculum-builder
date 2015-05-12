@@ -20,7 +20,6 @@ Meteor.startup ()->
   }
 
 getBucket = ()->
-  console.log "getting bucket: ", process.env
   if process.env.NODE_ENV == 'production'
     return BUCKET
   else
