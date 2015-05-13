@@ -11,9 +11,10 @@
  "app": "/Users/user/NooraHealth/CurriculumBuilder/",
  "env":{
   "PORT": 80,
+  "METEOR_ENV": "production",
   "ROOT_URL": "http://52.8.104.184",
-  "AWS_ACCESS_KEY": "AKIAJINIQJ4Z3KO4A4CA",
-  "AWS_SECRET_ACCESS_KEY": "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"
+  "AWS_ACCESS_KEY": "AKIAIVW5YVRXVM23FGRQ",
+  "AWS_SECRET_ACCESS_KEY": "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"
  },
  "deployCheckWaitTime": 15
 
