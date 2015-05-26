@@ -28,7 +28,6 @@ Template.curriculumBuilder.events {
 
   "click #submitLesson": (event, template)->
     title =  $("#lessonTitle").val()
-    shortTitle = $("#lessonShortTitle").val()
     tags = $("#lessonTags").val().split()
     lessonImage = $("#lessonImage")[0].files[0]
     
@@ -40,7 +39,6 @@ Template.curriculumBuilder.events {
     
     _id = Lessons.insert {
       title: title
-      short_title: shortTitle
       tags: tags
       image: prefix
     }
