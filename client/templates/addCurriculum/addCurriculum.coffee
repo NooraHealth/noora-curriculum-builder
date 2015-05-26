@@ -127,12 +127,11 @@ Template.curriculumBuilder.events {
       options = ( Meteor.filePrefix input.files[0] for input in $("input[name=option]") )
       correctOptions = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
 
-
-    if isQuestion() and options.length==0
+    if isQuestion(type) and options.length==0
       alert "You did not specify any options"
       return
     
-    if isQuestion() and correctOptions.length==0
+    if isQuestion(type) and correctOptions.length==0
       alert "You did not select the correct answer(s)"
       return
 
