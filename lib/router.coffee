@@ -8,3 +8,9 @@ Router.map ()->
       console.log "in the home data"
   }
 
+  this.route("webapp", {where: 'server'}).get ()->
+    this.response.writeHead 302, {
+      'Location': WEBAPP_URL
+    }
+    this.response.end()
+

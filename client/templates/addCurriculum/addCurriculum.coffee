@@ -183,7 +183,7 @@ Template.curriculumBuilder.events {
 
     Curriculum.update {_id: _id}, {$set: {nh_id:_id}}
     alert("New curriculum created")
-    Router.go "home"
+    Router.go "webapp"
 }
 
 Template.addModuleModal.events {
