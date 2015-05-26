@@ -189,6 +189,7 @@ Template.curriculumBuilder.events {
 
 Template.addModuleModal.events {
   "click div.uploadOption": (event, template)->
+    console.log "clicked"
     $(event.target).closest("div").toggleClass "correctly_selected"
     $(event.taddrget).closest("input.file").toggleClass "correct"
 }

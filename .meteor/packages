@@ -19,3 +19,5 @@ accounts-ui
 accounts-facebook
 aldeed:collection2
 dburles:collection-helpers
+fourseven:scss
+wolves:bourbon
