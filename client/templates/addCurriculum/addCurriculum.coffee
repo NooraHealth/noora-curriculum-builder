@@ -15,12 +15,17 @@ Template.curriculumBuilder.events {
       file = input.files[0]
       if file?
         uploader = new Slingshot.Upload "s3"
-        Uploaders.insert uploader
+        id = Uploaders.insert uploader
         uploader.send file , (err, downloadURL) ->
           if err
             console.log "Error uploading file: ", err
+            console.log file
             alert "A file failed to load! ", err
           else
+            console.log about ot remove
+            console.log Uploaders.find().count()
+            Uploaders.remove {_id: id}
+            console.log Uploaders.find().count()
             console.log downloadURL
     
   "click #addLesson":(event, template) ->
