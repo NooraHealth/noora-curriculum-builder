@@ -1,9 +1,9 @@
 
+
 Template.addModuleModal.helpers {
   option: (index)->
     return {option: index}
 }
-
 
 Template.curriculumBuilder.events {
   "click button[name=upload]":(event, template) ->
@@ -15,7 +15,7 @@ Template.curriculumBuilder.events {
       file = input.files[0]
       if file?
         uploader = new Slingshot.Upload "s3"
-
+        Uploaders.insert uploader
         uploader.send file , (err, downloadURL) ->
           if err
             console.log "Error uploading file: ", err
@@ -155,35 +155,6 @@ Template.curriculumBuilder.events {
     $("#moduleList"+ Session.get "current editing lesson").append "<li class='collection-item' id='#{_id}' name='moduleof#{lessonId}'>#{title}#{question}</li>"
     resetForm()
 
-  "click #submitCurriculum": (event, template) ->
-    title = $("#curriculumTitle").val()
-
-    if !title
-      alert "Please identify a title for your curriculum"
-      return
-    condition = $("#condition").val()
-    if !condition
-      alert "Please identify a condition for your curriculum"
-      return
-
-    lessons = $("li[name=lesson]")
-    $.each lessons, (index, lesson)->
-      lessonId = $(lesson).attr 'id'
-      modules = $("li[name=moduleof"+lessonId)
-      moduleIds = ( $(module).attr 'id' for module in modules)
-      lessonDoc = Lessons.update {_id: lessonId}, {$set:{modules: moduleIds}}
-    
-    lessonIds = ($(lesson).attr "id" for lesson in lessons)
-
-    _id = Curriculum.insert {
-      title:title
-      lessons: lessonIds
-      condition: condition
-    }
-
-    Curriculum.update {_id: _id}, {$set: {nh_id:_id}}
-    alert("New curriculum created")
-    Router.go "webapp"
 }
 
 Template.addModuleModal.events {

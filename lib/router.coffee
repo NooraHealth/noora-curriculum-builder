@@ -4,8 +4,13 @@ Router.map ()->
     path: '/'
     template: 'curriculumBuilder'
     layoutTemplate:'layout'
+    onBeforeAction: ()->
+      Session.set "uploaders", []
+      this.next()
     data: ()->
       console.log "in the home data"
+      uploaders = Uploaders.find({})
+      return {uploaders: uploaders}
   }
 
   this.route("webapp", {where: 'server'}).get ()->

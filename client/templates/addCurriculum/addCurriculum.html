@@ -1,5 +1,8 @@
 <template name="curriculumBuilder">
  <div class="container">
+   <div class="row">
+    {{>progress}}
+   </div>
   <div class="row">
     <div class="row">
       <div class=" input-field col l6 m6">
@@ -9,9 +12,6 @@
       <div class=" input-field col l6 m6">
         <label for="curriculumTitle">Title </label>
         <input type="text" id="curriculumTitle" class="no-reset"/>
-      </div>
-      <div class="input-field col l6 m6">
-        <button id="submitCurriculum" class="btn red large"> SUBMIT CURRICULUM </button>
       </div>
     </div>
     <div class="row">

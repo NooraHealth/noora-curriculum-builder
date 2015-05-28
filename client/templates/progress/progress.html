@@ -1,0 +1,16 @@
+<template name="progress">
+  {{#each uploadersFilter}}
+    <div class="progress">
+      <div class="determinate" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%;">
+        <span class="sr-only">{{progress}}% Complete</span>
+      </div>
+    </div>
+  {{/each}}
+  {{#if allLoaded}}
+  <div class="row">
+      <div class="input-field col l6 m6">
+        <button id="submitCurriculum" class="btn red large {{#if isDisabled}} disabled {{/if}}"> SUBMIT CURRICULUM </button>
+      </div>
+      </div>
+  {{/if}}
+</template>
