@@ -22,7 +22,7 @@ Template.curriculumBuilder.events {
             console.log file
             alert "A file failed to load! ", err
           else
-            console.log about ot remove
+            console.log "File uploaded: ", downloadURL
             console.log Uploaders.find().count()
             Uploaders.remove {_id: id}
             console.log Uploaders.find().count()
