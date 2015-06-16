@@ -34,18 +34,21 @@ Template.curriculumBuilder.events {
   "click #submitLesson": (event, template)->
     title =  $("#lessonTitle").val()
     tags = $("#lessonTags").val().split()
-    lessonImage = $("#lessonImage")[0].files[0]
+    lessonImage =$("#lessonImage")[0].files[0]
+    lessonIcon =$("#lessonIcon")[0].files[0]
     
     if !title or !lessonImage
       alert "You are missing either the title or the Lesson's image."
       return
 
     prefix = Meteor.filePrefix lessonImage
+    iconPrefix = Meteor.filePrefix lessonIcon
     
     _id = Lessons.insert {
       title: title
       tags: tags
       image: prefix
+      icon: iconPrefix
     }
 
     lesson = Lessons.update {_id: _id}, {$set: {nh_id: _id}}

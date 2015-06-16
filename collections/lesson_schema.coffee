@@ -14,6 +14,10 @@ LessonSchema = new SimpleSchema
   description:
     type:String
     optional:true
+  icon:
+    type: String
+    #regEx:  /^([/]?\w+)+[.]png/
+    optional:true
   image:
     type: String
     #regEx:  /^([/]?\w+)+[.]png/
