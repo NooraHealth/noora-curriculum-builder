@@ -13,6 +13,7 @@ Template.curriculumBuilder.events {
 
     for input in inputs
       file = input.files[0]
+      console.log "Here are the files to input"
       if file?
         uploader = new Slingshot.Upload "s3"
         id = Uploaders.insert uploader
@@ -94,6 +95,7 @@ Template.curriculumBuilder.events {
     incorrectAudio = Meteor.filePrefix $("#moduleIncorrectAudio")[0].files[0]
     image =  Meteor.filePrefix $("#moduleImage")[0].files[0]
     video =  Meteor.filePrefix $("#moduleVideo")[0].files[0]
+    videoUrl = $("#moduleVideoUrl").val()
     
     if !type
       alert "please identify a module type"
@@ -107,7 +109,7 @@ Template.curriculumBuilder.events {
       alert "You are missing some audio files"
       return
 
-    if !video and type=="VIDEO"
+    if !video and !videoUrl and type=="VIDEO"
       alert "You are missing the video file"
       return
     
@@ -151,6 +153,7 @@ Template.curriculumBuilder.events {
       tags: tags
       options:options
       video: video
+      video_url: videoUrl
       image: image
       audio: audio
       correct_audio: correctAudio

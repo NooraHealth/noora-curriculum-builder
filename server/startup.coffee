@@ -1,12 +1,6 @@
 Meteor.startup ()->
 
-  #getBucket = ()->
-    #if process.env.METEOR_ENV == 'production'
-      #return BUCKET
-    #else
-      #return DEV_BUCKET
   bucket = Meteor.call "getBucket"
-  #bucket = getBucket()
   Slingshot.createDirective "s3", Slingshot.S3Storage, {
     bucket: bucket,
     acl: "public-read",
