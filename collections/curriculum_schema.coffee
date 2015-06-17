@@ -9,6 +9,8 @@
 CurriculumSchema = new SimpleSchema
   title:
     type:String
+  contentSrc:
+    type:String
   lessons:
     type:[String]
     minCount:1

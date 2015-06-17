@@ -41,13 +41,16 @@ Template.progress.events {
     
     lessonIds = ($(lesson).attr "id" for lesson in lessons)
 
-    _id = Curriculum.insert {
-      title:title
-      lessons: lessonIds
-      condition: condition
-    }
+    Meteor.call "contentEndpoint", (err, contentSrc)->
 
-    Curriculum.update {_id: _id}, {$set: {nh_id:_id}}
-    alert("New curriculum created")
-    Router.go "webapp"
+      _id = Curriculum.insert {
+        contentSrc: contentSrc
+        title:title
+        lessons: lessonIds
+        condition: condition
+      }
+
+      Curriculum.update {_id: _id}, {$set: {nh_id:_id}}
+      alert("New curriculum created")
+      Router.go "webapp"
 }
