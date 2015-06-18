@@ -7,7 +7,13 @@ Template.curriculumBuilder.events {
     console.log lessonID
     Meteor.call "deleteLesson", lessonID
 
-  "click .deleteModule": (event, template)->
+  "click .delete-module": (event, template)->
+    console.log $(event.target)
+    moduleId = $(event.target).closest("li").attr "id"
+    console.log moduleId
+    parentId = $(event.target).closest(".lesson").attr "id"
+    Meteor.call "deleteModule", moduleId, parentId
+
 
   "click .moduleList" : (event, template)->
     

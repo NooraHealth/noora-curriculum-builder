@@ -1,5 +1,5 @@
 <template name="lessonListItem">
-<li name='lesson' id="{{_id}}">
+<li class='lesson' id="{{_id}}">
   <div class='collapsible-header'>
     {{title}}
     <a style='float:right' class='waves-effect waves-blue right-align btn-flat add-module'><i class='mdi-content-add'></i></a>
@@ -18,6 +18,6 @@
 
 <template name="moduleListItem">
   <li class='collection-item' id='{{_id}}'>{{title}}{{question}}
-    <i class='mdi-navigation-cancel right-align delete-module'></i>
+    <a style='float:right' class='waves-effect waves-red right-align btn-flat delete-module'><i class='mdi-navigation-cancel'></i></a>
   </li>
 </template>
