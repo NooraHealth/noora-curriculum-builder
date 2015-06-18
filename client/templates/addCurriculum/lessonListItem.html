@@ -1,0 +1,22 @@
+<template name="lessonListItem">
+<li name='lesson'>
+  <div class='collapsible-header'>
+    {{title}}
+    <a style='float:right' class='waves-effect waves-blue right-align btn-flat' name='addModule'><i class='mdi-content-add'></i></a>
+  </div>
+  <div class='collapsible-body'>
+    <ul class='collection moduleList' id='{{_id}}'>
+      {{#each modulesInLesson}}
+        {{>moduleListItem}}
+      {{/each}}
+
+    </ul>
+  </div>
+</li>
+</template>
+
+<template name="moduleListItem">
+  <li class='collection-item' id='{{_id}}'>{{title}}{{question}}
+    <i class='mdi-navigation-cancel right-align delete-module'></i>
+  </li>
+</template>

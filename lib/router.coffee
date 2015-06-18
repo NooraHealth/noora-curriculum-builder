@@ -5,8 +5,11 @@ Router.map ()->
     template: 'curriculumBuilder'
     layoutTemplate:'layout'
     onBeforeAction: ()->
-      Session.set "uploaders", []
-      this.next()
+      #create a curriculum to build
+      Meteor.call "getStubCurriculum", (id) ->
+        Session.set "curriculum", id
+        Session.set "uploaders", []
+        this.next()
     data: ()->
       console.log "in the home data"
       uploaders = Uploaders.find({})

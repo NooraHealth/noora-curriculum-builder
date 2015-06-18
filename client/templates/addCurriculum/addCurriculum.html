@@ -1,6 +1,6 @@
 <template name="curriculumBuilder">
  <div class="container">
-   <div class="row">
+<div class="row">
     {{>progress}}
    </div>
   <div class="row">
@@ -20,6 +20,9 @@
       <div class="row">
         <div class="col l8 m8">
           <ul class="collapsible" id="lessonsList" data-collapsible="expandable">
+            {{#each lessons}}
+              {{>lessonListItem}}
+            {{/each}}
           </ul>
         </div>
       </div>

@@ -1,11 +1,11 @@
 
 
-Template.addModuleModal.helpers {
-  option: (index)->
-    return {option: index}
-}
 
 Template.curriculumBuilder.events {
+  "click .deleteModule": (event, template)->
+
+  "click .moduleList" : (event, template)->
+    
   "click button[name=upload]":(event, template) ->
     event.preventDefault()
 
@@ -27,7 +27,6 @@ Template.curriculumBuilder.events {
             console.log Uploaders.find().count()
             Uploaders.remove {_id: id}
             console.log Uploaders.find().count()
-            console.log downloadURL
     
   "click #addLesson":(event, template) ->
     $("#addLessonModal").openModal()
@@ -38,9 +37,9 @@ Template.curriculumBuilder.events {
     lessonImage =$("#lessonImage")[0].files[0]
     lessonIcon =$("#lessonIcon")[0].files[0]
     
-    if !title or !lessonImage
-      alert "You are missing either the title or the Lesson's image."
-      return
+    #if !title or !lessonImage
+      #alert "You are missing either the title or the Lesson's image."
+      #return
 
     prefix = Meteor.filePrefix lessonImage
     iconPrefix = Meteor.filePrefix lessonIcon
@@ -54,12 +53,16 @@ Template.curriculumBuilder.events {
 
     lesson = Lessons.update {_id: _id}, {$set: {nh_id: _id}}
 
-    $("#lessonsList").append "<li name='lesson' id='#{_id}'>
-      <div class='collapsible-header'>
-      #{title}  
-      <a style='float:right' class='waves-effect waves-blue right-align btn-flat' name='addModule'><i class='mdi-content-add'></i></a>
-      </div>
-      <div class='collapsible-body'><ul class='collection' id='moduleList#{_id}'></ul></div></li>"
+    currId = Session.get "curriculum"
+    curr = Curriculum.findOne {_id: currId}
+    Meter. call "appendLesson", currId, lesson
+
+    #$("#lessonsList").append "<li name='lesson' id='#{_id}'>
+      #<div class='collapsible-header'>
+      ##{title}  
+      #<a style='float:right' class='waves-effect waves-blue right-align btn-flat' name='addModule'><i class='mdi-content-add'></i></a>
+      #</div>
+      #<div class='collapsible-body'><ul class='collection moduleList' id='moduleList#{_id}'></i></ul></div></li>"
 
     $(".collapsible").collapsible {
       accordion:false
@@ -96,54 +99,56 @@ Template.curriculumBuilder.events {
     image =  Meteor.filePrefix $("#moduleImage")[0].files[0]
     video =  Meteor.filePrefix $("#moduleVideo")[0].files[0]
     videoUrl = $("#moduleVideoUrl").val()
+    correctOptions = []
+
+    options = []
+    #if !type
+      #alert "please identify a module type"
+      #return
     
-    if !type
-      alert "please identify a module type"
-      return
+    #if !audio and type != "VIDEO"
+      #alert "Missing module audio"
+      #return
+
+    #if (!correctAudio or !incorrectAudio) and isQuestion(type)
+      #alert "You are missing some audio files"
+      #return
+
+    #if !video and !videoUrl and type=="VIDEO"
+      #alert "You are missing the video file"
+      #return
     
-    if !audio and type != "VIDEO"
-      alert "Missing module audio"
-      return
+    #if !image and type!="VIDEO" and type!="MULTIPLE_CHOICE" and type!="GOAL_CHOICE"
+      #alert "Missing image file"
+      #return
 
-    if (!correctAudio or !incorrectAudio) and isQuestion(type)
-      alert "You are missing some audio files"
-      return
+    #if !title and (type=="VIDEO" or type=="SLIDE")
+      #alert "Missing title"
+      #return
 
-    if !video and !videoUrl and type=="VIDEO"
-      alert "You are missing the video file"
-      return
+    #if !question and isQuestion(type)
+      #alert "Missing question"
+      #return
+
+    #if type=="SCENARIO"
+      #correctOptions = [$("input[name=scenario_answer]:checked").attr "id"]
+      #options = ["Normal" , "CallDoc", "Call911"]
+
+    #if type=="BINARY"
+      #correctOptions=  [$("input[name=binary_answer]:checked").attr "id"]
+      #options = ["Yes", "No"]
+
+    #if type=="MULTIPLE_CHOICE" || type=="GOAL_CHOICE"
+      #options = ( Meteor.filePrefix input.files[0] for input in $("input[name=option]") )
+      #correctOptions = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
+
+    #if isQuestion(type) and options.length==0
+      #alert "You did not specify any options"
+      #return
     
-    if !image and type!="VIDEO" and type!="MULTIPLE_CHOICE" and type!="GOAL_CHOICE"
-      alert "Missing image file"
-      return
-
-    if !title and (type=="VIDEO" or type=="SLIDE")
-      alert "Missing title"
-      return
-
-    if !question and isQuestion(type)
-      alert "Missing question"
-      return
-
-    if type=="SCENARIO"
-      correctOptions = [$("input[name=scenario_answer]:checked").attr "id"]
-      options = ["Normal" , "CallDoc", "Call911"]
-
-    if type=="BINARY"
-      correctOptions=  [$("input[name=binary_answer]:checked").attr "id"]
-      options = ["Yes", "No"]
-
-    if type=="MULTIPLE_CHOICE" || type=="GOAL_CHOICE"
-      options = ( Meteor.filePrefix input.files[0] for input in $("input[name=option]") )
-      correctOptions = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
-
-    if isQuestion(type) and options.length==0
-      alert "You did not specify any options"
-      return
-    
-    if isQuestion(type) and correctOptions.length==0
-      alert "You did not select the correct answer(s)"
-      return
+    #if isQuestion(type) and correctOptions.length==0
+      #alert "You did not select the correct answer(s)"
+      #return
 
     _id = Modules.insert {
       type:type
@@ -163,7 +168,11 @@ Template.curriculumBuilder.events {
     updated = Modules.update {_id: _id}, {$set: {nh_id: _id}}
     console.log Modules.findOne {_id: _id}
     lessonId = Session.get "current editing lesson"
-    $("#moduleList"+ Session.get "current editing lesson").append "<li class='collection-item' id='#{_id}' name='moduleof#{lessonId}'>#{title}#{question}</li>"
+    EditingModules.insert {
+      parent_lesson: lessonId
+      module_id: _id
+    }
+    #$("#moduleList"+ Session.get "current editing lesson").append ""
     resetForm()
 
 }
