@@ -3,13 +3,6 @@
 
 Template.curriculumBuilder.events {
   "click .delete-lesson": (event, template)->
-    console.log "finding"
-    console.log $(event.target)
-    console.log $(event.target).find "ul"
-    console.log $(event.target).find "ul .moduleList"
-    console.log $(event.target).find ".moduleList"
-    
-
     lessonID = $(event.target).closest("li").attr "id"
     console.log lessonID
     Meteor.call "deleteLesson", lessonID
@@ -194,6 +187,9 @@ Template.addModuleModal.events {
 }
 
 Template.curriculumBuilder.onRendered ()->
+  $(".collapsible").collapsible {
+    accordion:false
+  }
   $("select").material_select()
 
 resetForm = () ->

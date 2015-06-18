@@ -59,10 +59,14 @@ Lessons.helpers {
     return getMediaUrl()+ @.image
 
   getModulesSequence: ()->
+    console.log "Getting th emodule sequence"
+    console.log @.modules
     if !@.modules
       return []
       
     moduleDocs = (Modules.findOne {_id: moduleId} for moduleId in @.modules)
+    console.log "Returning moduleDocs"
+    console.log moduleDocs
     return moduleDocs
 
 }

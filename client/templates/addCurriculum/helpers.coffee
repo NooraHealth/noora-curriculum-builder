@@ -1,6 +1,8 @@
 Template.lessonListItem.helpers
   modulesInLesson: ()->
     lesson = @
+    console.log "This is the lesson"
+    console.log @
     return @.getModulesSequence()
 
 Template.addModuleModal.helpers {

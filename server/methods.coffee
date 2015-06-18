@@ -17,8 +17,8 @@ Meteor.methods {
       Modules.remove {_id:module}
 
   appendModule: (lessonId, moduleId)->
-    Lessons.update {_id: curriculumId}, {$push: {"modules":moduleId}}
-    Lessons.findOne {_id: lessonId}
+    Lessons.update {_id: lessonId}, {$push: {"modules":moduleId}}
+    console.log Lessons.findOne {_id: lessonId}
 
   appendLesson: ( curriculumId, lessonId)->
     Curriculum.update {_id: curriculumId}, {$push: {"lessons":lessonId}}
