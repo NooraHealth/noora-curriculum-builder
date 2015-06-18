@@ -1,7 +1,7 @@
 Template.lessonListItem.helpers
   modulesInLesson: ()->
-    EditingModules.find {parent_lesson: @._id}
-
+    lesson = @
+    return @.getModulesSequence()
 
 Template.addModuleModal.helpers {
   option: (index)->
@@ -10,8 +10,7 @@ Template.addModuleModal.helpers {
 
 Template.curriculumBuilder.helpers
   lessons: ()->
-    currId = Session.get "curriculum"
-    curriculum = Curriculum.findOne {_id: currId}
+    curriculum = Meteor.getStubCurriculum()
     return curriculum.getLessonDocuments()
 
 

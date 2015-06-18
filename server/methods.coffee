@@ -1,11 +1,11 @@
 Meteor.methods {
-  getStubCurriculum: ()->
-    curriculumObject = Curriculum.upsert {title: "stub"}, {$set: {title: "stub", lessons: [], condition: "stub" }}
-    console.log curriculumObject
-    return curriculumObject.insertedId
+  appendModule: (lessonId, moduleId)->
+    Lessons.update {_id: curriculumId}, {$push: {"modules":moduleId}}
+    Lessons.findOne {_id: lessonId}
 
-  appendLesson: (lesson, curriculumId)->
-    Curriculum.update {_id: curriculumId}, {$push: {"lessons":lesson}}
+  appendLesson: ( curriculumId, lessonId)->
+    Curriculum.update {_id: curriculumId}, {$push: {"lessons":lessonId}}
+    console.log Curriculum.findOne {_id: curriculumId}
 
   getBucket: ()->
     if process.env.METEOR_ENV == 'production'

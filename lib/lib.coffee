@@ -1,3 +1,10 @@
+Meteor.getStubCurriculum= ()->
+    stub = Curriculum.findOne {title:"stub"}
+    if stub
+      return stub
+    id = Curriculum.insert {title: "stub", lessons: [] ,condition: "stub"}
+    return Curriculum.findOne {_id: id}
+
 Meteor.filePrefix = (file)->
   #Store file into a directory by the user's username.
   if not file?

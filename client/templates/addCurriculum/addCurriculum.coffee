@@ -49,13 +49,13 @@ Template.curriculumBuilder.events {
       tags: tags
       image: prefix
       icon: iconPrefix
+      modules: []
     }
 
     lesson = Lessons.update {_id: _id}, {$set: {nh_id: _id}}
 
-    currId = Session.get "curriculum"
-    curr = Curriculum.findOne {_id: currId}
-    Meter. call "appendLesson", currId, lesson
+    curr = Meteor.getStubCurriculum()
+    Meteor.call "appendLesson", curr._id, _id
 
     #$("#lessonsList").append "<li name='lesson' id='#{_id}'>
       #<div class='collapsible-header'>
@@ -149,9 +149,11 @@ Template.curriculumBuilder.events {
     #if isQuestion(type) and correctOptions.length==0
       #alert "You did not select the correct answer(s)"
       #return
+    lessonId = Session.get "current editing lesson"
 
     _id = Modules.insert {
       type:type
+      parent_lesson: lessonId
       correct_answer: correctOptions
       title:title
       question:question
@@ -166,12 +168,7 @@ Template.curriculumBuilder.events {
     }
 
     updated = Modules.update {_id: _id}, {$set: {nh_id: _id}}
-    console.log Modules.findOne {_id: _id}
-    lessonId = Session.get "current editing lesson"
-    EditingModules.insert {
-      parent_lesson: lessonId
-      module_id: _id
-    }
+    Meteor.call "appendModule", lessonId, _id
     #$("#moduleList"+ Session.get "current editing lesson").append ""
     resetForm()
 

@@ -11,6 +11,9 @@ ModuleSchema = new SimpleSchema
     type:String
     min:0
     optional:true
+  parent_lesson:
+    type:String
+    optional: true
   tags:
     type:[String]
     minCount:0
