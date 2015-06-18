@@ -2,6 +2,18 @@
 
 
 Template.curriculumBuilder.events {
+  "click .delete-lesson": (event, template)->
+    console.log "finding"
+    console.log $(event.target)
+    console.log $(event.target).find "ul"
+    console.log $(event.target).find "ul .moduleList"
+    console.log $(event.target).find ".moduleList"
+    
+
+    lessonID = $(event.target).closest("li").attr "id"
+    console.log lessonID
+    Meteor.call "deleteLesson", lessonID
+
   "click .deleteModule": (event, template)->
 
   "click .moduleList" : (event, template)->
@@ -71,7 +83,7 @@ Template.curriculumBuilder.events {
 
     resetForm()
 
-  "click [name^=addModule]": (event, template) ->
+  "click .add-module": (event, template) ->
     id = $(event.target).closest("li").attr 'id'
     $("#moduleLessonId").attr "value", id
     Session.set "current editing lesson", id

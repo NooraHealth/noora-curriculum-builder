@@ -58,43 +58,12 @@ Lessons.helpers {
   imgSrc: ()->
     return getMediaUrl()+ @.image
 
-  getSublessonDocuments: ()->
-    if !this.has_sublessons
-      return []
-
-    lessonDocuments = []
-    _.each this.lessons, (lessonID) ->
-      lesson = Lessons.findOne {nh_id: lessonID}
-      if lesson?
-        lessonDocuments.push lesson
-
-    return lessonDocuments
-
   getModulesSequence: ()->
-    if !this.first_module
-      Meteor.Error "This lesson does not have any modules"
-    if this.modules
-      moduleDocs = (Modules.findOne {_id: moduleId} for moduleId in @.modules)
-      return moduleDocs
-
-    else
-      modules = []
-      module = @.getFirstModule()
-      modules.push module
-      until module.isLastModule()
-        module = module.nextModule()
-        modules.push module
-      return modules
-
-  getFirstModule: ()->
-    return Modules.findOne {nh_id: @.first_module}
-
-  hasSublessons: ()->
-    if @.has_sublessons
-      return @.has_sublessons == 'true'
-    else
-      return false
-
+    if !@.modules
+      return []
+      
+    moduleDocs = (Modules.findOne {_id: moduleId} for moduleId in @.modules)
+    return moduleDocs
 
 }
 

@@ -1,4 +1,21 @@
 Meteor.methods {
+  deleteLesson: (id)->
+    console.log "Deleting the lesson"
+    lesson = Lessons.findOne {_id: id}
+    #delete the modules
+    Meteor.call "removeAllModules", lesson
+    #delete the lesson
+    Lessons.remove {_id: id}
+    #remove from curriculum
+    curriculum = Meteor.getStubCurriculum()
+    lessons= curriculum.lessons
+    newLessons = (lesson for lesson in lessons when lesson is not id )
+    Curriculum.update {_id: curriculum._id}, {$set: {lessons: newLessons}}
+
+  removeAllModules: (lesson)->
+    for module in lesson.modules
+      Modules.remove {_id:module}
+
   appendModule: (lessonId, moduleId)->
     Lessons.update {_id: curriculumId}, {$push: {"modules":moduleId}}
     Lessons.findOne {_id: lessonId}
