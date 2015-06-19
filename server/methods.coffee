@@ -2,6 +2,8 @@ Meteor.methods {
   deleteLesson: (id)->
     console.log "Deleting the lesson"
     lesson = Lessons.findOne {_id: id}
+    if !lesson
+      return
     #delete the modules
     Meteor.call "removeAllModules", lesson
     #delete the lesson
@@ -20,6 +22,8 @@ Meteor.methods {
 
 
   removeAllModules: (lesson)->
+    if !lesson.modules
+      return
     for module in lesson.modules
       Modules.remove {_id:module}
 

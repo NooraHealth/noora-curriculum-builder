@@ -14,7 +14,6 @@ Template.curriculumBuilder.events {
     parentId = $(event.target).closest(".lesson").attr "id"
     Meteor.call "deleteModule", moduleId, parentId
 
-
   "click .moduleList" : (event, template)->
     
   "click button[name=upload]":(event, template) ->
@@ -63,6 +62,7 @@ Template.curriculumBuilder.events {
       modules: []
     }
 
+
     lesson = Lessons.update {_id: _id}, {$set: {nh_id: _id}}
 
     curr = Meteor.getStubCurriculum()
@@ -75,10 +75,6 @@ Template.curriculumBuilder.events {
       #</div>
       #<div class='collapsible-body'><ul class='collection moduleList' id='moduleList#{_id}'></i></ul></div></li>"
 
-    $(".collapsible").collapsible {
-      accordion:false
-      expandable:true
-    }
 
     resetForm()
 
@@ -180,6 +176,10 @@ Template.curriculumBuilder.events {
 
     updated = Modules.update {_id: _id}, {$set: {nh_id: _id}}
     Meteor.call "appendModule", lessonId, _id
+    $(".collapsible").collapsible {
+      accordion:false
+      expandable:true
+    }
     #$("#moduleList"+ Session.get "current editing lesson").append ""
     resetForm()
 
