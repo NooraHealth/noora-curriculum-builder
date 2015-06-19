@@ -1,13 +1,9 @@
 Meteor.methods {
   updateCurriculum: (id, data)->
-    console.log "updating the curriculum"
-    console.log data
-
     Curriculum.update {_id: id}, {$set:{title: data.title, lessons:data.lessons, contentSrc: data.contentSrc, condition: data.condition}}, (err, doc)->
       if err
-        Meteor.Error "mongo-error", err
-        console.log err
-    
+        throw new Meteor.Error "mongo-error", err
+
   removeStubCurriculum:()->
     Curriculum.remove {title: TITLE_OF_STUB}
 

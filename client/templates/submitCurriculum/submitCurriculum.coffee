@@ -29,13 +29,18 @@ Template.submitCurriculum.events {
       alert "Please identify a title for your curriculum"
       return
 
+    currentCurriculum = Meteor.getCurrentCurriculum()
+    curriculumWithThisTitle = Curriculum.findOne {title: title}
+    if curriculumWithThisTitle and curriculumWithThisTitle._id !=currentCurriculum._id
+      alert "That curriculum title is already in use. Please choose another title."
+      return
+
     if !condition
       alert "Please identify a condition for your curriculum"
       return
 
     lessons = $("table")
     lessonIds = ($(lesson).attr "id" for lesson in lessons)
-    currentCurriculum = Session.get "current curriculum"
 
     Meteor.call "contentEndpoint", (err, contentSrc)->
       data = {
@@ -44,7 +49,7 @@ Template.submitCurriculum.events {
         lessons: lessonIds
         condition: condition
       }
-      Meteor.call "updateCurriculum",currentCurriculum, data, (err)->
+      Meteor.call "updateCurriculum",currentCurriculum._id, data, (err)->
         if err
           Session.set "error-message", err
           return
