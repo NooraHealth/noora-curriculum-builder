@@ -176,10 +176,6 @@ Template.curriculumBuilder.events {
 
     updated = Modules.update {_id: _id}, {$set: {nh_id: _id}}
     Meteor.call "appendModule", lessonId, _id
-    $(".collapsible").collapsible {
-      accordion:false
-      expandable:true
-    }
     #$("#moduleList"+ Session.get "current editing lesson").append ""
     resetForm()
 
@@ -193,9 +189,6 @@ Template.addModuleModal.events {
 }
 
 Template.curriculumBuilder.onRendered ()->
-  $(".collapsible").collapsible {
-    accordion:false
-  }
   $("select").material_select()
 
 resetForm = () ->
