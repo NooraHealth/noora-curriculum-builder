@@ -9,6 +9,7 @@
 CurriculumSchema = new SimpleSchema
   title:
     type:String
+    max: 100
   contentSrc:
     type:String
     optional: true

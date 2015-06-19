@@ -13,7 +13,9 @@ Template.curriculumBuilder.events {
     moduleId = $(event.target).closest("tr").attr "id"
     #parentId = $(event.target).closest(".lesson").attr "id"
     parentId = $(event.target).closest("table").attr "id"
-    Meteor.call "deleteModule", moduleId, parentId
+    Meteor.call "deleteModule", moduleId, parentId, (err)->
+      if err
+        Session.set "error-message", "There was an error deleting the module: " +err
     
   "click button[name=upload]":(event, template) ->
     event.preventDefault()
@@ -45,10 +47,6 @@ Template.curriculumBuilder.events {
     tags = $("#lessonTags").val().split()
     lessonImage =$("#lessonImage")[0].files[0]
     lessonIcon =$("#lessonIcon")[0].files[0]
-    
-    #if !title or !lessonImage
-      #alert "You are missing either the title or the Lesson's image."
-      #return
 
     prefix = Meteor.filePrefix lessonImage
     iconPrefix = Meteor.filePrefix lessonIcon
@@ -65,20 +63,13 @@ Template.curriculumBuilder.events {
     lesson = Lessons.update {_id: _id}, {$set: {nh_id: _id}}
 
     curr = Meteor.getStubCurriculum()
-    Meteor.call "appendLesson", curr._id, _id
-
-    #$("#lessonsList").append "<li name='lesson' id='#{_id}'>
-      #<div class='collapsible-header'>
-      ##{title}  
-      #<a style='float:right' class='waves-effect waves-blue right-align btn-flat' name='addModule'><i class='mdi-content-add'></i></a>
-      #</div>
-      #<div class='collapsible-body'><ul class='collection moduleList' id='moduleList#{_id}'></i></ul></div></li>"
-
+    Meteor.call "appendLesson", curr._id, _id, (err)->
+      if err
+        Session.set "error-message", "There was an error adding the lesson:", err
 
     resetForm()
 
   "click .add-module": (event, template) ->
-    #id = $(event.target).closest("li").attr 'id'
     id = $(event.target).closest("table").attr 'id'
     $("#moduleLessonId").attr "value", id
     Session.set "current editing lesson", id
@@ -175,15 +166,15 @@ Template.curriculumBuilder.events {
     }
 
     updated = Modules.update {_id: _id}, {$set: {nh_id: _id}}
-    Meteor.call "appendModule", lessonId, _id
-    #$("#moduleList"+ Session.get "current editing lesson").append ""
+    Meteor.call "appendModule", lessonId, _id, (err)->
+      if err
+        Session.set "error-message", "There was an error inserting the module into the database:" +err
     resetForm()
 
 }
 
 Template.addModuleModal.events {
   "click div.uploadOption": (event, template)->
-    console.log "clicked"
     $(event.target).closest("div").toggleClass "correctly_selected"
     $(event.taddrget).closest("input.file").toggleClass "correct"
 }
@@ -191,16 +182,13 @@ Template.addModuleModal.events {
 Template.curriculumBuilder.onRendered ()->
   $("select").material_select()
 
+###
+# HELPER FUNCTIONS
+###
 resetForm = () ->
-
   addModuleModal = $("#addModuleModal")
   for input in addModuleModal.find("div[name=attributeRow]")
     $(input).slideUp()
-
-  #$("#default-select").attr "disabled", true
-  #$("#default-select").attr "selected", true
-
-    
   for input in $("input:not(.no-reset)")
     input.value = ""
 

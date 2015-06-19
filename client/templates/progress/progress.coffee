@@ -41,7 +41,11 @@ Template.progress.events {
     
     lessonIds = ($(lesson).attr "id" for lesson in lessons)
 
+
     Meteor.call "contentEndpoint", (err, contentSrc)->
+      if err
+        Session.set "error-message", err
+        return
 
       _id = Curriculum.insert {
         contentSrc: contentSrc
@@ -51,6 +55,12 @@ Template.progress.events {
       }
 
       Curriculum.update {_id: _id}, {$set: {nh_id:_id}}
+      #remove the stub editing curriculum
+      #to prepare for a fresh build
+      Meteor.call "removeStubCurriculum", (err)->
+        if err
+          Session.set "error-message", err
+          return
       alert("New curriculum created")
       Router.go "webapp"
 }
