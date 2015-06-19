@@ -3,18 +3,17 @@
 
 Template.curriculumBuilder.events {
   "click .delete-lesson": (event, template)->
-    lessonID = $(event.target).closest("li").attr "id"
+    #lessonID = $(event.target).closest("li").attr "id"
+    lessonID = $(event.target).closest("table").attr "id"
     console.log lessonID
     Meteor.call "deleteLesson", lessonID
 
   "click .delete-module": (event, template)->
-    console.log $(event.target)
-    moduleId = $(event.target).closest("li").attr "id"
-    console.log moduleId
-    parentId = $(event.target).closest(".lesson").attr "id"
+    #moduleId = $(event.target).closest("li").attr "id"
+    moduleId = $(event.target).closest("tr").attr "id"
+    #parentId = $(event.target).closest(".lesson").attr "id"
+    parentId = $(event.target).closest("table").attr "id"
     Meteor.call "deleteModule", moduleId, parentId
-
-  "click .moduleList" : (event, template)->
     
   "click button[name=upload]":(event, template) ->
     event.preventDefault()
@@ -79,7 +78,8 @@ Template.curriculumBuilder.events {
     resetForm()
 
   "click .add-module": (event, template) ->
-    id = $(event.target).closest("li").attr 'id'
+    #id = $(event.target).closest("li").attr 'id'
+    id = $(event.target).closest("table").attr 'id'
     $("#moduleLessonId").attr "value", id
     Session.set "current editing lesson", id
     $("#addModuleModal").openModal()

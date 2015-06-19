@@ -11,13 +11,14 @@ Meteor.methods {
     #remove from curriculum
     curriculum = Meteor.getStubCurriculum()
     lessons= curriculum.lessons
-    newLessons = (lesson for lesson in lessons when lesson is not id )
+    newLessons = (lesson for lesson in lessons when lesson is not id)
     Curriculum.update {_id: curriculum._id}, {$set: {lessons: newLessons}}
 
   deleteModule: (id, parent)->
     lesson = Lessons.findOne {_id:parent}
     modules = lesson.modules
     newModules = (module for module in modules when module is not id)
+    Lessons.update {_id: parent}, {$set:{modules: newModules}}
     Modules.remove {_id:id}
 
 
