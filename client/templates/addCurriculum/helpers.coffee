@@ -16,7 +16,8 @@ Template.moduleListItem.onDestroyed ()->
 
 Template.curriculumBuilder.helpers
   lessons: ()->
-    curriculum = Meteor.getStubCurriculum()
+    curriculum = Meteor.getCurrentCurriculum()
+    #curriculum = Meteor.getStubCurriculum()
     return curriculum.getLessonDocuments()
 
 Tracker.autorun ()->

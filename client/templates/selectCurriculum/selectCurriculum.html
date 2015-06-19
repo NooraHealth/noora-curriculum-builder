@@ -1,0 +1,26 @@
+<template name="selectCurriculum">
+  <div class=" valign-wrapper row fullScreen ">
+    <div class="valign col m6 offset-m3 l6 offset-l3 scrollBox">
+      <form action="#" id="selectCurriculum">
+        <div class="row">
+          <h4> Please select a curriculum</h4>
+        </div>
+
+        <div class="row" >
+          <div class="input-field ">
+            <div class="col l8 m8 s8 offset-s2 offset-l2 offset-m2">
+              {{#each curriculums}}
+              <p>
+                <input id="{{title}}" class="with-gap" type="radio" name="curriculum" value="{{getId}}">
+                <label for="{{title}}"> {{title}}</label>
+              </p>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+        <br/>
+        <button id="selectCurriculum"> Select Curriculum </button>
+      </form>
+    </div>
+  </div>
+</template>

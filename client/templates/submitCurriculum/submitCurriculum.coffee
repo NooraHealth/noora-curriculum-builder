@@ -1,5 +1,5 @@
 
-Template.progress.helpers {
+Template.submitCurriculum.helpers {
   progress: ()->
     return this.progress()*100
 
@@ -20,7 +20,7 @@ filterStillLoading = (uploaders) ->
   return stillLoading
 
 
-Template.progress.events {
+Template.submitCurriculum.events {
   "click #submitCurriculum": (event, template) ->
     title = $("#curriculumTitle").val()
 
@@ -34,26 +34,41 @@ Template.progress.events {
 
     lessons = $("table")
     lessonIds = ($(lesson).attr "id" for lesson in lessons)
+    currentCurriculum = Session.get "current curriculum"
 
     Meteor.call "contentEndpoint", (err, contentSrc)->
-      if err
-        Session.set "error-message", err
-        return
-
-      _id = Curriculum.insert {
+      data = {
         contentSrc: contentSrc
         title:title
         lessons: lessonIds
         condition: condition
       }
-
-      Curriculum.update {_id: _id}, {$set: {nh_id:_id}}
-      #remove the stub editing curriculum
-      #to prepare for a fresh build
-      Meteor.call "removeStubCurriculum", (err)->
+      Meteor.call "updateCurriculum",currentCurriculum, data, (err)->
         if err
           Session.set "error-message", err
           return
+
       alert("New curriculum created")
-      Router.go "webapp"
+      Router.go "selectCurriculum"
+    #Meteor.call "contentEndpoint", (err, contentSrc)->
+      #if err
+        #Session.set "error-message", err
+        #return
+        
+      #_id = Curriculum.insert {
+        #contentSrc: contentSrc
+        #title:title
+        #lessons: lessonIds
+        #condition: condition
+      #}
+
+      #Curriculum.update {_id: _id}, {$set: {nh_id:_id}}
+      ##remove the stub editing curriculum
+      ##to prepare for a fresh build
+      #Meteor.call "removeStubCurriculum", (err)->
+        #if err
+          #Session.set "error-message", err
+          #return
+      #alert("New curriculum created")
+      #Router.go "webapp"
 }

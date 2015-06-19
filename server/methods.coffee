@@ -1,6 +1,9 @@
 Meteor.methods {
+  updateCurriculum: (id, data)->
+    Curriculum.upsert {_id: id}, {$set:{data}}  
+    
   removeStubCurriculum:()->
-    Curriculum.remove {title: "stub"}
+    Curriculum.remove {title: TITLE_OF_STUB}
 
   deleteLesson: (id)->
     console.log "Deleting the lesson"

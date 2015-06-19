@@ -1,8 +1,15 @@
+Meteor.setCurrentCurriculum = (id)->
+  Session.set "current curriculum", id
+
+Meteor.getCurrentCurriculum = ()->
+  id = Session.get "current curriculum"
+  return Curriculum.findOne {_id: id}
+
 Meteor.getStubCurriculum= ()->
-    stub = Curriculum.findOne {title:"stub"}
+    stub = Curriculum.findOne {title:TITLE_OF_STUB}
     if stub
       return stub
-    id = Curriculum.insert {title: "stub", lessons: [] ,condition: "stub"}
+    id = Curriculum.insert {title: TITLE_OF_STUB, lessons: [] ,condition: TITLE_OF_STUB}
     return Curriculum.findOne {_id: id}
 
 Meteor.filePrefix = (file)->

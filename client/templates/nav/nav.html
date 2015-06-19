@@ -3,10 +3,16 @@
 <!--<div class="btn-floating" style="top: 45px; left: 45px">-->
   <!--<a href="{{pathFor 'home'}}"><img class="circle" alt="Noora Health" src="/NHlogo.png"  style="max-width: 40px"/></a>-->
   <!--</div>-->
+
+  <tile class="brand-tile">
+    <a href="{{pathFor 'home'}}"><img class="z-depth-2" alt="Noora Health" src="/NHlogo.png"/></a>
+  </tile>
+
   <nav>
     <div class="nav-wrapper">
       <ul class="right">
         <!--<li><a id="at-nav-btn">Logout</a></li>-->
+        <li><a href="/selectCurriculum">Select A Curriculum To Edit</a></li>
         <li><a onClick="Meteor.logout()"><i class="mdi-action-exit-to-app"></i></a></li>
         <!--<li>{{>atNavButton}}</li>-->
       </ul>
