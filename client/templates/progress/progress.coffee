@@ -32,15 +32,8 @@ Template.progress.events {
       alert "Please identify a condition for your curriculum"
       return
 
-    lessons = $("li[name=lesson]")
-    $.each lessons, (index, lesson)->
-      lessonId = $(lesson).attr 'id'
-      modules = $("li[name=moduleof"+lessonId)
-      moduleIds = ( $(module).attr 'id' for module in modules)
-      lessonDoc = Lessons.update {_id: lessonId}, {$set:{modules: moduleIds}}
-    
+    lessons = $("table")
     lessonIds = ($(lesson).attr "id" for lesson in lessons)
-
 
     Meteor.call "contentEndpoint", (err, contentSrc)->
       if err
