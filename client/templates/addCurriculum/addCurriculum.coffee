@@ -3,15 +3,13 @@
 
 Template.curriculumBuilder.events {
   "click .delete-lesson": (event, template)->
-    #lessonID = $(event.target).closest("li").attr "id"
+    event.preventDefault()
     lessonID = $(event.target).closest("table").attr "id"
-    console.log lessonID
     Meteor.call "deleteLesson", lessonID
 
   "click .delete-module": (event, template)->
-    #moduleId = $(event.target).closest("li").attr "id"
+    event.preventDefault()
     moduleId = $(event.target).closest("tr").attr "id"
-    #parentId = $(event.target).closest(".lesson").attr "id"
     parentId = $(event.target).closest("table").attr "id"
     Meteor.call "deleteModule", moduleId, parentId, (err)->
       if err
@@ -19,7 +17,6 @@ Template.curriculumBuilder.events {
     
   "click button[name=upload]":(event, template) ->
     event.preventDefault()
-
     inputs =  $("input.file")
 
     for input in inputs
@@ -58,11 +55,9 @@ Template.curriculumBuilder.events {
       icon: iconPrefix
       modules: []
     }
-
-
     lesson = Lessons.update {_id: _id}, {$set: {nh_id: _id}}
-
-    curr = Meteor.getStubCurriculum()
+    
+    curr= Meteor.getCurrentCurriculum()
     Meteor.call "appendLesson", curr._id, _id, (err)->
       if err
         Session.set "error-message", "There was an error adding the lesson:", err

@@ -11,8 +11,9 @@ Template.selectCurriculum.helpers {
 }
 
 
-Template.selectCurriculumFooter.events {
+Template.selectCurriculum.events {
   'click #selectCurriculum':(event, template) ->
+    #event.preventDefault()
     console.log "Getting the curriculum Id"
     curriculumId = $("input[name=curriculum]:checked").val()
     Meteor.setCurrentCurriculum curriculumId

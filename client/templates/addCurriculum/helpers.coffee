@@ -10,14 +10,15 @@ Template.addModuleModal.helpers {
     return {option: index}
 }
 
-Template.moduleListItem.onDestroyed ()->
-  console.log "Module list item destroyed!"
-  console.log this
-
 Template.curriculumBuilder.helpers
+  curriculumTitle: ()->
+    curr = Meteor.getCurrentCurriculum()
+    return curr.title
+  curriculumCondition: ()->
+    curr = Meteor.getCurrentCurriculum()
+    return curr.condition
   lessons: ()->
     curriculum = Meteor.getCurrentCurriculum()
-    #curriculum = Meteor.getStubCurriculum()
     return curriculum.getLessonDocuments()
 
 Tracker.autorun ()->

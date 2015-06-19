@@ -23,11 +23,12 @@ filterStillLoading = (uploaders) ->
 Template.submitCurriculum.events {
   "click #submitCurriculum": (event, template) ->
     title = $("#curriculumTitle").val()
+    condition = $("#condition").val()
 
     if !title
       alert "Please identify a title for your curriculum"
       return
-    condition = $("#condition").val()
+
     if !condition
       alert "Please identify a condition for your curriculum"
       return
