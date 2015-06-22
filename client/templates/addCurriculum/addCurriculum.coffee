@@ -95,53 +95,54 @@ Template.curriculumBuilder.events {
     correctOptions = []
 
     options = []
-    #if !type
-      #alert "please identify a module type"
-      #return
+    if !type
+      alert "please identify a module type"
+      return
     
-    #if !audio and type != "VIDEO"
-      #alert "Missing module audio"
-      #return
+    if !audio and type != "VIDEO"
+      alert "Missing module audio"
+      return
 
-    #if (!correctAudio or !incorrectAudio) and isQuestion(type)
-      #alert "You are missing some audio files"
-      #return
+    if (!correctAudio or !incorrectAudio) and isQuestion(type)
+      alert "You are missing some audio files"
+      return
 
-    #if !video and !videoUrl and type=="VIDEO"
-      #alert "You are missing the video file"
-      #return
+    if !video and !videoUrl and type=="VIDEO"
+      alert "You are missing the video file"
+      return
     
-    #if !image and type!="VIDEO" and type!="MULTIPLE_CHOICE" and type!="GOAL_CHOICE"
-      #alert "Missing image file"
-      #return
+    if !image and type!="VIDEO" and type!="MULTIPLE_CHOICE" and type!="GOAL_CHOICE"
+      alert "Missing image file"
+      return
 
-    #if !title and (type=="VIDEO" or type=="SLIDE")
-      #alert "Missing title"
-      #return
 
-    #if !question and isQuestion(type)
-      #alert "Missing question"
-      #return
+    if !title and (type=="VIDEO" or type=="SLIDE")
+      alert "Missing title"
+      return
 
-    #if type=="SCENARIO"
-      #correctOptions = [$("input[name=scenario_answer]:checked").attr "id"]
-      #options = ["Normal" , "CallDoc", "Call911"]
+    if !question and isQuestion(type)
+      alert "Missing question"
+      return
 
-    #if type=="BINARY"
-      #correctOptions=  [$("input[name=binary_answer]:checked").attr "id"]
-      #options = ["Yes", "No"]
+    if type=="SCENARIO"
+      correctOptions = [$("input[name=scenario_answer]:checked").attr "id"]
+      options = ["Normal" , "CallDoc", "Call911"]
 
-    #if type=="MULTIPLE_CHOICE" || type=="GOAL_CHOICE"
-      #options = ( Meteor.filePrefix input.files[0] for input in $("input[name=option]") )
-      #correctOptions = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
+    if type=="BINARY"
+      correctOptions=  [$("input[name=binary_answer]:checked").attr "id"]
+      options = ["Yes", "No"]
 
-    #if isQuestion(type) and options.length==0
-      #alert "You did not specify any options"
-      #return
+    if type=="MULTIPLE_CHOICE" || type=="GOAL_CHOICE"
+      options = ( Meteor.filePrefix input.files[0] for input in $("input[name=option]") )
+      correctOptions = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
+
+    if isQuestion(type) and options.length==0
+      alert "You did not specify any options"
+      return
     
-    #if isQuestion(type) and correctOptions.length==0
-      #alert "You did not select the correct answer(s)"
-      #return
+    if isQuestion(type) and correctOptions.length==0
+      alert "You did not select the correct answer(s)"
+      return
     lessonId = Session.get "current editing lesson"
 
     _id = Modules.insert {

@@ -20,4 +20,7 @@ Template.curriculumBuilder.helpers
   lessons: ()->
     curriculum = Meteor.getCurrentCurriculum()
     return curriculum.getLessonDocuments()
-  
+
+Tracker.autorun ()->
+  error = Session.get "error-message"
+  Materialize.toast
