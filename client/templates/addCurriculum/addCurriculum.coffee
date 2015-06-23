@@ -111,7 +111,7 @@ Template.curriculumBuilder.events {
       alert "You are missing the video file"
       return
     
-    if !image and type!="VIDEO" and type!="MULTIPLE_CHOICE" and type!="GOAL_CHOICE"
+    if !image and type!="VIDEO" and type!="MULTIPLE_CHOICE"
       alert "Missing image file"
       return
 
@@ -132,7 +132,7 @@ Template.curriculumBuilder.events {
       correctOptions=  [$("input[name=binary_answer]:checked").attr "id"]
       options = ["Yes", "No"]
 
-    if type=="MULTIPLE_CHOICE" || type=="GOAL_CHOICE"
+    if type=="MULTIPLE_CHOICE"
       options = ( Meteor.filePrefix input.files[0] for input in $("input[name=option]") )
       correctOptions = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
 
@@ -189,4 +189,4 @@ resetForm = () ->
     input.value = ""
 
 isQuestion = (type)->
-  return type== "BINARY" or type=="SCENARIO" or type=="MULTIPLE_CHOICE" or type=="GOAL_CHOICE"
+  return type== "BINARY" or type=="SCENARIO" or type=="MULTIPLE_CHOICE"
