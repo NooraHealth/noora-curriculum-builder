@@ -19,22 +19,22 @@ Template.curriculumBuilder.events {
     event.preventDefault()
     inputs =  $("input.file")
 
-    for input in inputs
-      file = input.files[0]
-      console.log "Here are the files to input"
-      if file?
-        uploader = new Slingshot.Upload "s3"
-        id = Uploaders.insert uploader
-        uploader.send file , (err, downloadURL) ->
-          if err
-            console.log "Error uploading file: ", err
-            console.log file
-            alert "A file failed to load! ", err
-          else
-            console.log "File uploaded: ", downloadURL
-            console.log Uploaders.find().count()
-            Uploaders.remove {_id: id}
-            console.log Uploaders.find().count()
+    #for input in inputs
+      #file = input.files[0]
+      #console.log "Here are the files to input"
+      #if file?
+        #uploader = new Slingshot.Upload "s3"
+        #id = Uploaders.insert uploader
+        #uploader.send file , (err, downloadURL) ->
+          #if err
+            #console.log "Error uploading file: ", err
+            #console.log file
+            #alert "A file failed to load! ", err
+          #else
+            #console.log "File uploaded: ", downloadURL
+            #console.log Uploaders.find().count()
+            #Uploaders.remove {_id: id}
+            #console.log Uploaders.find().count()
     
   "click #addLesson":(event, template) ->
     $("#addLessonModal").openModal()
