@@ -14,7 +14,6 @@ Router.map ()->
       else
         this.next()
     data: ()->
-      console.log "in the home data"
       uploaders = Uploaders.find({})
       return {uploaders: uploaders}
   }

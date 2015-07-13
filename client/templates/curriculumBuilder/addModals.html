@@ -1,60 +1,48 @@
-<template name="curriculumBuilder">
- <div class="container">
-<div class="row">
-    {{>submitCurriculum}}
-   </div>
-  <div class="row">
-    <div class="row">
-      <div class=" input-field col l6 m6">
-        <label for="condition">Condition</label>
-        <input type="text" id="condition" class="no-reset" value="{{curriculumCondition}}"/>
-      </div>
-      <div class=" input-field col l6 m6">
-        <label for="curriculumTitle">Title </label>
-        <input type="text" id="curriculumTitle" class="no-reset" value="{{curriculumTitle}}"/>
-      </div>
-    </div>
-    <div class="row">
-      <button data-target="addLessonModal" style="width:100%" class='modal-trigger btn'  id="addLesson">Add Lesson <i class="mdi-content-add"></i></button>
-    </div>
-      <div class="row">
-        <div class="col l8 m8">
-            {{#each lessons}}
-              {{>lessonListItem}}
-            {{/each}}
-        </div>
-      </div>
-  </div>
- </div>
-
+<template name="addLessonModal">
 <div id="addLessonModal" class="modal">
   <div class="modal-content">  
     <form action="#" id="addLessonForm">
       <div class="row">
         <div class="input-field col l6 m6 ">
           <label for="lessonTitle">Title</label>
-          <input type="text" id="lessonTitle">  
+          <input type="text" id="lessonTitle" value={{getTitle}}>  
         </div>
       </div>
-      
+
+      <div class ="row">
+        <div class="input-field col l6 m6 ">
+          <label for="lessonOrder">Lesson Order Number</label>
+          <input type="number" id="lessonOrder" min=1>
+        </div>
+      </div>   
+
       <div class="row">
         <div class="input-field col l12 m12 ">
           <label for="lessonTags">Tags (separate each tag by a single space)</label>
-          <input type="text" id="lessonTags" class="materialize-textarea">  
+          <input type="text" id="lessonTags" class="materialize-textarea" value={{getTags}}>  
         </div>
       </div>
 
       <div class="row">
         <div class="col l12 m12">
           <label for="lessonImage" class="file-input"> Image </label>
-            <input type="file" id="lessonImage" class="file ">
+          <input type="file" id="lessonImage" class="file">
         </div>
+        
+        <div class="col l12 m12">
+          <label for="lessonPrevImage"> Previously Uploaded: {{getImage}} </label>
+        </div>  
       </div>
+      
       <div class="row">
         <div class="col l12 m12">
           <label for="lessonIcon" class="file-input"> Icon </label>
-            <input type="file" id="lessonIcon" class="file ">
+          <input type="file" id="lessonIcon" class="file ">
         </div>
+        
+        <div class="col l12 m12">
+          <label for="lessonPrevIcon"> Previously Uploaded: {{getIcon}} </label>
+        </div>  
       </div>
     </form>
   </div>
@@ -77,8 +65,8 @@
           <div class="input-field col l6 m6 ">
           <label for="moduleType">Module Type</label>
           <br/>
-          <select id="moduleType">
-            <option value="" id="default-select" disabled selected >Module Type</option>
+          <select id="moduleType" >
+            <option value="" id="default-select" disabled selected>Module Type</option>
             <option value="SCENARIO"> Scenario </option>
             <option value="MULTIPLE_CHOICE"> Multiple Choice </option>
             <option value="BINARY"> Binary Choice </option>
@@ -89,9 +77,16 @@
       </div>
 
       <div class="row">
+          <div name="attributeRow" class="input-field col l12 m12 VIDEO SLIDE BINARY MULTIPLE_CHOICE SCENARIO hidden">
+              <label for="moduleOrder">Module Order Number</label>
+              <input type="number" id="moduleOrder" min=1>
+          </div>
+      </div>
+      
+      <div class="row">
         <div name="attributeRow" class="input-field col l12 m12 VIDEO SLIDE BINARY MULTIPLE_CHOICE  SCENARIO hidden">
           <label for="moduleTags">Tags (separate each tag by a single space)</label>
-          <input type="text" id="moduleTags" class="materialize-textarea">  
+          <input type="text" id="moduleTags" class="materialize-textarea" value={{getTags}}>  
         </div>
       </div>
     </form>
@@ -100,14 +95,14 @@
 <div class="row">
         <div name="attributeRow" class="attributeRow input-field col l12 m12 SLIDE VIDEO hidden">
           <label for="moduleTitle">Title</label>
-          <input type="text" id="moduleTitle"/>  
+          <input type="text" id="moduleTitle" value={{getTitle}}>  
         </div>
       </div>
       
       <div class="row">
         <div name="attributeRow" class="input-field col l12 m12 BINARY MULTIPLE_CHOICE  SCENARIO hidden">
           <label for="moduleQuestion">Question</label>
-          <input type="text" class="materialize-textarea" id="moduleQuestion">  
+          <input type="text" class="materialize-textarea" id="moduleQuestion" value={{getQuestion}}>  
         </div>
       </div>
 
@@ -142,41 +137,47 @@
 
       <div  name="attributeRow" class=" row MULTIPLE_CHOICE  hidden">
         <p>Options (Select if correct) </p>
-        <div class="row uploadOption">
+        <div class="row uploadOption {{isCorrectlySelected0}}">
           <!--<input type="checkbox" name="option" id="0">  -->
           <label for="option1" class="optionCheckbox"> 
-            <input type="file" name="option" class="file ">
+            <input type="file" name="option" class="file " id=0>
           </label>
+          <label for="prevOption1" id=0> Previously Uploaded: {{getPrevOption0}}</label>
         </div>
-        <div class="row uploadOption">
+        <div class="row uploadOption {{isCorrectlySelected1}}">
           <!--<input type="checkbox" name="option" id="1">  -->
-        <label for="option2" class="optionCheckbox">
-            <input type="file" name="option" class="file ">
+          <label for="option2" class="optionCheckbox">
+            <input type="file" name="option" class="file " id=1>
           </label>
+          <label for="prevOption2" id=1> Previously Uploaded: {{getPrevOption1}}</label>
         </div>
-        <div class="row uploadOption">
+        <div class="row uploadOption {{isCorrectlySelected2}}">
           <!--<input type="checkbox" name="option" id="2">  -->
           <label for="option3" class="optionCheckbox">
-            <input type="file" name="option" class="file ">
+            <input type="file" name="option" class="file " id=2>
           </label>
+          <label for="prevOption3" id=2> Previously Uploaded: {{getPrevOption2}}</label>
         </div>
-        <div class="row uploadOption">
+        <div class="row uploadOption {{isCorrectlySelected3}}">
           <!--<input type="checkbox" name="option" id="3">  -->
           <label for="option4" class="optionCheckbox">
-            <input type="file" name="option" class="file ">
+            <input type="file" name="option" class="file " id=3>
           </label>
+          <label for="prevOption4" id=3> Previously Uploaded: {{getPrevOption3}}</label>
         </div>
-        <div class="row uploadOption">
+        <div class="row uploadOption {{isCorrectlySelected4}}">
           <!--<input type="checkbox" name="option" id="4">  -->
           <label for="option5" class="optionCheckbox">
-            <input type="file" name="option" class="file ">
+            <input type="file" name="option" class="file " id=4>
           </label>
+          <label for="prevOption5" id=4> Previously Uploaded: {{getPrevOption4}}</label>
         </div>
-        <div class="row uploadOption">
+        <div class="row uploadOption {{isCorrectlySelected5}}">
           <!--<input type="checkbox" name="option" id="5">  -->
           <label for="option6" class="optionCheckbox">
-            <input type="file" name="option" class="file ">
+            <input type="file" name="option" class="file " id=5>
           </label>
+          <label for="prevOption6" id=5> Previously Uploaded: {{getPrevOption5}}</label>
         </div>
       </div>
 
@@ -185,6 +186,9 @@
           <label class="file-input"  for="moduleAudio"> Audio </label>
             <input type="file" id="moduleAudio" class="file ">
         </div>
+        <div class="col l12 m12">
+          <label for="prevModuleAudio"> Previously Uploaded: {{getAudio}} </label>
+        </div>
       </div>
 
       <div name="attributeRow" class="row SCENARIO MULTIPLE_CHOICE  BINARY hidden">
@@ -192,11 +196,17 @@
           <label class="file-input" for="moduleCorrectAudio"> Correct Audio </label>
             <input type="file" id="moduleCorrectAudio" class="file ">
         </div>
+        <div class="col l12 m12">
+          <label for="prevCorrectAudio"> Previously Uploaded: {{getCorrectAudio}} </label>
+        </div>
       </div>
       <div name="attributeRow" class="row SCENARIO MULTIPLE_CHOICE  BINARY hidden">
         <div class="col l12 m12">
           <label  class="file-input"  for="moduleIncorrectAudio"> Incorrect Audio </label>
             <input type="file" id="moduleIncorrectAudio" class="file ">
+        </div>
+        <div class="col l12 m12">
+          <label for="prevIncorrectAudio"> Previously Uploaded: {{getIncorrectAudio}} </label>
         </div>
       </div>
       
@@ -205,17 +215,38 @@
           <label for="moduleImage" class="file-input"> Image </label>
             <input type="file" id="moduleImage" class="file ">
         </div>
+        <div class="col l12 m12">
+          <label for="prevModuleImage"> Previously Uploaded: {{getImage}} </label>
+        </div>
       </div>
 
       <div name="attributeRow"  class="row VIDEO hidden">
         <div class="col l12 m12">
           <label for="moduleVideo" class="file-input"> Video </label>
-            <input type="file" id="moduleVideo" class="file ">
+          <input type="file" id="moduleVideo" class="file ">
+          <div class="col l12 m12">
+            <label for="prevModuleVideo"> Previously Uploaded: {{getVideo}} </label>
+          </div>
             <p>OR</p>
           <label for="moduleVideoUrl" class="file-input"> Video URL </label>
-            <input type="text" id="moduleVideoUrl" class="text">
+          <input type="text" id="moduleVideoUrl" class="text" value={{getVideoUrl}}>
         </div>
       </div>
+
+      <div class ="row">
+        <div class="input-field col l6 m6 ">
+          <label for="moduleStartTime">Start Time (in seconds)</label>
+          <input type="number" id="moduleStartTime" min=0 value={{getStartTime}}>
+        </div>
+      </div>   
+
+      <div class ="row">
+        <div class="input-field col l6 m6 ">
+          <label for="moduleEndTime">End Time (in seconds)</label>
+          <input type="number" id="moduleEndTime" min=0 value={{getEndTime}}>
+        </div>
+      </div>   
+    
     </form>
   </div>
   <div class="modal-footer">  

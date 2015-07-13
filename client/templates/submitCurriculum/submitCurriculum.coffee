@@ -1,24 +1,7 @@
-
-Template.submitCurriculum.helpers {
-  progress: ()->
-    return this.progress()*100
-
-  uploadersFilter: ()->
-    return filterStillLoading this.uploaders
-
-  allLoaded: ()->
-    return filterStillLoading(this.uploaders).length == 0
-
-}
-
-
-filterStillLoading = (uploaders) ->
-  stillLoading = []
-  uploaders.forEach (l)->
-    if l.progress() < 1
-      stillLoading.push l
-  return stillLoading
-
+###
+# Event handlers for submiting curriculum.
+# Templates involved: submitCurriculum
+###
 
 Template.submitCurriculum.events {
   "click #submitCurriculum": (event, template) ->
@@ -29,12 +12,12 @@ Template.submitCurriculum.events {
       alert "Please identify a title for your curriculum"
       return
 
-    currentCurriculum = Meteor.getCurrentCurriculum()
-    curriculumWithThisTitle = Curriculum.findOne {title: title}
-    if curriculumWithThisTitle and curriculumWithThisTitle._id !=currentCurriculum._id
+    curriculum = Meteor.getCurrentCurriculum()
+    curriculumWithSameTitle = Curriculum.findOne {title: title}
+    if curriculumWithSameTitle and curriculumWithSameTitle._id != curriculum._id
       alert "That curriculum title is already in use. Please choose another title."
       return
-
+    
     if !condition
       alert "Please identify a condition for your curriculum"
       return
@@ -49,12 +32,13 @@ Template.submitCurriculum.events {
         lessons: lessonIds
         condition: condition
       }
-      Meteor.call "updateCurriculum",currentCurriculum._id, data, (err)->
+     
+      Meteor.call "updateCurriculum", curriculum._id, data, (err)->
         if err
           Session.set "error-message", err
           return
 
-      alert("New curriculum created")
+      alert("Curriculum updated.")
       Router.go "selectCurriculum"
     #Meteor.call "contentEndpoint", (err, contentSrc)->
       #if err

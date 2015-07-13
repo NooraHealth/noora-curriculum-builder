@@ -1,0 +1,31 @@
+<template name="curriculumBuilder">
+ <div class="container">
+<div class="row">
+    {{>submitCurriculum}}
+   </div>
+  <div class="row">
+    <div class="row">
+      <div class=" input-field col l6 m6">
+        <label for="condition">Condition</label>
+        <input type="text" id="condition" class="no-reset" value="{{curriculumCondition}}"/>
+      </div>
+      <div class=" input-field col l6 m6">
+        <label for="curriculumTitle">Title </label>
+        <input type="text" id="curriculumTitle" class="no-reset" value="{{curriculumTitle}}"/>
+      </div>
+    </div>
+    <div class="row">
+      <button data-target="addLessonModal" style="width:100%" class='modal-trigger btn' id="addLesson">Add Lesson <i class="mdi-content-add"></i></button>
+    </div>
+      <div class="row">
+        <div class="col l8 m8">
+            {{#each lessons}}
+              {{>lessonListItem}}
+            {{/each}}
+        </div>
+      </div>
+  </div>
+ </div>
+
+ {{>addLessonModal}}
+ </template>

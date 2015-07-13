@@ -7,12 +7,13 @@
         </div>
 
         <div class="row" >
-          <div class="input-field ">
+          <div class="input-field">
             <div class="col l8 m8 s8 offset-s2 offset-l2 offset-m2">
               {{#each curriculums}}
               <p>
                 <input id="{{title}}" class="with-gap" type="radio" name="curriculum" value="{{getId}}">
                 <label for="{{title}}"> {{title}}</label>
+                <a style='float:right' class='waves-effect waves-red right-align btn-flat delete-curriculum'><i class='mdi-navigation-cancel'></i></a>
               </p>
               {{/each}}
             </div>

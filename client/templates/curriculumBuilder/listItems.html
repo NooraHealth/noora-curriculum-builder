@@ -2,7 +2,10 @@
 <table id="{{_id}}">
 <thead class="lesson" >
   <tr>
-    <th data-field="id">{{title}}</th>
+      <th data-field="id">
+        {{title}}
+        <button data-target="addLessonModal" class='modal-trigger btn' id="updateLesson">Update Lesson <i class="mdi-content-add"></i></button>
+      </th>
       <th data-field="name">
         <a style='float:right' class='waves-effect waves-blue right-align btn-flat add-module'><i class='mdi-content-add'></i></a>
       </th>
@@ -19,7 +22,9 @@
 
 <template name="moduleListItem">
 <tr id="{{_id}}">
-  <td>{{title}}{{question}}</td>
+  <td>{{title}}{{question}}
+    <button data-target="addModuleModal" class='modal-trigger btn-small' id="updateModule">Update Module <i class="mdi-content-add"></i></button>
+  </td>
   <td>{{type}}</td>
     <td>
       <a style='float:right' class='waves-effect waves-red right-align btn-flat delete-module'><i class='mdi-navigation-cancel'></i></a>

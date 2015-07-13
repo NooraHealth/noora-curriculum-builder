@@ -55,18 +55,17 @@ LessonSchema = new SimpleSchema
 Lessons.attachSchema LessonSchema
 
 Lessons.helpers {
+  
+  # Returns the image source URL for this lesson.  
   imgSrc: ()->
     return getMediaUrl()+ @.image
 
+  # Returns an array of the module documents in this lesson.
   getModulesSequence: ()->
-    console.log "Getting th emodule sequence"
-    console.log @.modules
     if !@.modules
       return []
       
     moduleDocs = (Modules.findOne {_id: moduleId} for moduleId in @.modules)
-    console.log "Returning moduleDocs"
-    console.log moduleDocs
     return moduleDocs
 
 }
