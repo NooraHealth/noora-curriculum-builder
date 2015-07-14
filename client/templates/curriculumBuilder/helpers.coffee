@@ -77,15 +77,15 @@ Template.addModuleModal.helpers
 
   getStartTime: ()->
     module = Meteor.getCurrentModule()
-    if !module or !module.start_time
-      return "no start time"
-    return module.start_time
+    if !module or !module.start
+      return ""
+    return module.start
   
   getEndTime: ()->
     module = Meteor.getCurrentModule()
-    if !module or !module.end_time
+    if !module or !module.end
       return ""
-    return module.end_time
+    return module.end
 
   isNew: ()->
     module = Meteor.getCurrentModule()

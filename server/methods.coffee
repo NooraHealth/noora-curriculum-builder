@@ -6,6 +6,10 @@ Meteor.methods {
   deleteCurriculum: (curriculumId)->
     curriculum = Curriculum.findOne {_id: curriculumId}
     lessons = curriculum.lessons
+    console.log "curriculum is"
+    console.log curriculum
+    console.log "lessons are"
+    console.log lessons
     for lesson in lessons 
         Meteor.call "deleteLesson", lesson, curriculumId
     Curriculum.remove {_id: curriculumId}, (err)->
@@ -27,6 +31,7 @@ Meteor.methods {
   # If lesson or curriculum documents are not found or if update fails, an error is thrown.
   deleteLesson: (lessonId, curriculumId)->
     check(lessonId, String)
+    console.log "lesson title is #{lesson.title} and id is #{lesson._id}"
     lesson = Lessons.findOne {_id: lessonId}
     if !lesson
       throw new Meteor.Error "document-not-found", "Lesson to delete could not be found"

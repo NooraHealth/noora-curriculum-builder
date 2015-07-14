@@ -224,8 +224,8 @@ submitModule = (event)->
     options: options
     video: video
     video_url: videoUrl
-    start_time: startTime
-    end_time: endTime
+    start: startTime
+    end: endTime
     image: image
     audio: audio
     correct_audio: correctAudio
