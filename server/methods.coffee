@@ -3,6 +3,33 @@
 ###
 
 Meteor.methods {
+  deleteLessonS3: (lessonId)->
+    lesson = Lessons.findOne({_id: lessonId})
+    bucket = Meteor.call "getBucket"
+    params = {
+      Bucket: bucket
+      Delete: {
+        Objects: [
+          {
+            Key: lesson.image
+          },
+          {
+            Key: lesson.icon
+          }
+        ],
+        Quiet: true
+      },
+      #MFA:,
+      RequestPayer: 'requester'
+    }
+
+    s3.deleteObjects params, (err, data)->
+      if (err)
+        console.log "Error deleting file: ", err
+        console.log params
+      else
+        console.log data
+  
   deleteCurriculum: (curriculumId)->
     curriculum = Curriculum.findOne {_id: curriculumId}
     lessons = curriculum.lessons

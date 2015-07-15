@@ -10,8 +10,9 @@ Template.curriculumBuilder.events {
     event.preventDefault()
     lessonId = $(event.target).closest("table").attr "id"
     curriculum = Meteor.getCurrentCurriculum()
+    deleteFromS3 lessonId
     Meteor.call "deleteLesson", lessonId, curriculum._id
-  
+
   # Delete module
   "click .delete-module": (event, template)->
     event.preventDefault()
@@ -89,6 +90,35 @@ Template.addModuleModal.events {
 
 ###
 # HELPER FUNCTIONS
+###
+###
+deleteFromS3 = (lessonId)->
+  s3 = new AWS.S3({apiVersion: '2006-03-01'})
+  lesson = Lessons.findOne({_id: lessonId}) 
+  bucket = Meteor.call "getBucket"
+  params = {
+    Bucket: bucket
+    Delete: {
+      Objects: [
+        {
+          Key: lesson.image
+        },
+        {
+          Key: lesson.icon
+        }
+      ],
+      Quiet: true
+    },
+    #MFA:,
+    RequestPayer: 'requester'
+  }
+
+  s3.deleteObjects params, (err, data)->
+    if (err)
+      console.log "Error deleting file: ", err
+      console.log params
+    else
+      console.log data
 ###
 
 uploadFile = (uploader, file, id)->
