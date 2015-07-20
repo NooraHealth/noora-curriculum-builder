@@ -19,21 +19,9 @@ Meteor.startup ()->
   }
 
   AWS.config.update
-    bucket: bucket
     region: REGION
     apiVersion: '2006-03-01'
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 
-###  
-  s3.listBuckets (err, data)->
-    if err
-      console.log err, err.stack
-    else 
-      console.log data
-###
-
- 
-
-
-
+  @s3 = new AWS.S3({ params: {Bucket: bucket} })

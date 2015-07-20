@@ -10,8 +10,7 @@ Template.curriculumBuilder.events {
     event.preventDefault()
     lessonId = $(event.target).closest("table").attr "id"
     curriculum = Meteor.getCurrentCurriculum()
-    #deleteLessonFromS3 lessonId
-    #Meteor.call "deleteLessonFromS3", lessonId
+    Meteor.call "deleteLessonFromS3", lessonId
     Meteor.call "deleteLesson", lessonId, curriculum._id
   
   # Delete module
@@ -19,6 +18,7 @@ Template.curriculumBuilder.events {
     event.preventDefault()
     moduleId = $(event.target).closest("tr").attr "id"
     lessonId = $(event.target).closest("table").attr "id"
+    Meteor.call "deleteModuleFromS3", moduleId
     Meteor.call "deleteModule", moduleId, lessonId, (err)->
       if err
         Session.set "error-message", "There was an error deleting the module:", err
@@ -108,17 +108,6 @@ Template.addModuleModal.events {
 ###
 # HELPER FUNCTIONS
 ###
-deleteLessonFromS3 = (lessonId)->
-  lesson = Lessons.findOne({_id: lessonId})
-  lessonImage = "/" + lesson.image
-  console.log "lesson image is #{lessonImage}"
-  check lessonImage, String
-  S3.delete lessonImage, (err, data)->
-    if err
-      console.log err
-    else
-      console.log data
-
 uploadFile = (uploader, file, id)->
   uploader.send file, (err, downloadURL)->
     if err

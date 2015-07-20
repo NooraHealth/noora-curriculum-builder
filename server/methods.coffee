@@ -3,50 +3,32 @@
 ###
 
 Meteor.methods {
-  # uploadToS3: (
-
   deleteLessonFromS3: (lessonId)->
     lesson = Lessons.findOne({_id: lessonId})
-    bucket = Meteor.call "getBucket"
-    s3 = new AWS.S3()
-    console.log "s3 is"
-    console.log s3
     console.log "lessonImage is #{lesson.image}"
-    s3.deleteObject {Bucket: bucket, Key: lesson.image}, (err, data)->
+    console.log "lessonIcon is #{lesson.icon}"
+    s3.deleteObjects {Delete: {Objects: [{Key: lesson.image}, {Key: lesson.icon}] } }, (err, data)->
       if err
         console.log err
       else
         console.log data
-   
-   ###
-    params = {
-      Bucket: bucket
-      Delete: {
-        Objects: [
-          {
-            Key: lesson.image
-          },
-          {
-            Key: lesson.icon
-          }
-        ]
-      }
-    }
-    
-    console.log "params are "
-    console.log params
-    console.log params.Delete.Objects
-    s3.listBuckets (err, data)->
+    return
+  
+  deleteModuleFromS3: (moduleId)->
+    module = Modules.findOne({_id: moduleId})
+    console.log "ModuleImage is #{module.image}"
+    console.log "ModuleAudio is #{module.audio}"
+    console.log "ModuleIncorrectAudio is #{module.incorrect_audio}"
+    console.log "ModuleCorrectAudio is #{module.correct_audio}"
+    console.log "ModuleVideo is #{module.video}"
+    s3.deleteObjects {Delete: {Objects: [{Key: module.image}, {Key: module.audio}, {Key: module.incorrect_audio},
+    {Key: module.correct_audio}, {Key: module.video}] } }, (err, data)->
       if err
-        console.log err, err.stack
+        console.log err
       else
         console.log data
-    s3.deleteObjects params, (err, data)->
-      if (err)
-        console.log "Error deleting file", err
-      else
-        console.log data
-  ###
+    return
+    
   
   deleteCurriculum: (curriculumId)->
     curriculum = Curriculum.findOne {_id: curriculumId}
