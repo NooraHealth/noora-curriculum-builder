@@ -10,6 +10,8 @@ Template.curriculumBuilder.events {
     event.preventDefault()
     lessonId = $(event.target).closest("table").attr "id"
     curriculum = Meteor.getCurrentCurriculum()
+    #deleteLessonFromS3 lessonId
+    #Meteor.call "deleteLessonFromS3", lessonId
     Meteor.call "deleteLesson", lessonId, curriculum._id
   
   # Delete module
@@ -77,6 +79,22 @@ Template.curriculumBuilder.events {
       submitModule event
     resetForm()
 }
+###  
+  "click button[name=upload]":(event, template) ->
+    event.preventDefault()
+    inputs = $("input[type=file]")
+    for input in inputs
+      file = input.files[0]
+      console.log "Here are the files to input"
+      if file?
+        Meteor.call "uploadToS3", file
+    if ($(event.target).attr "id") is "submitLesson"
+      submitLesson event 
+    else if ($(event.target).attr "id") is "submitModule"
+      submitModule event
+    resetForm()
+}
+###
 
 Template.curriculumBuilder.onRendered ()->
   $("select").material_select()
@@ -90,6 +108,16 @@ Template.addModuleModal.events {
 ###
 # HELPER FUNCTIONS
 ###
+deleteLessonFromS3 = (lessonId)->
+  lesson = Lessons.findOne({_id: lessonId})
+  lessonImage = "/" + lesson.image
+  console.log "lesson image is #{lessonImage}"
+  check lessonImage, String
+  S3.delete lessonImage, (err, data)->
+    if err
+      console.log err
+    else
+      console.log data
 
 uploadFile = (uploader, file, id)->
   uploader.send file, (err, downloadURL)->

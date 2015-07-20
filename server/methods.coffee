@@ -3,6 +3,51 @@
 ###
 
 Meteor.methods {
+  # uploadToS3: (
+
+  deleteLessonFromS3: (lessonId)->
+    lesson = Lessons.findOne({_id: lessonId})
+    bucket = Meteor.call "getBucket"
+    s3 = new AWS.S3()
+    console.log "s3 is"
+    console.log s3
+    console.log "lessonImage is #{lesson.image}"
+    s3.deleteObject {Bucket: bucket, Key: lesson.image}, (err, data)->
+      if err
+        console.log err
+      else
+        console.log data
+   
+   ###
+    params = {
+      Bucket: bucket
+      Delete: {
+        Objects: [
+          {
+            Key: lesson.image
+          },
+          {
+            Key: lesson.icon
+          }
+        ]
+      }
+    }
+    
+    console.log "params are "
+    console.log params
+    console.log params.Delete.Objects
+    s3.listBuckets (err, data)->
+      if err
+        console.log err, err.stack
+      else
+        console.log data
+    s3.deleteObjects params, (err, data)->
+      if (err)
+        console.log "Error deleting file", err
+      else
+        console.log data
+  ###
+  
   deleteCurriculum: (curriculumId)->
     curriculum = Curriculum.findOne {_id: curriculumId}
     lessons = curriculum.lessons
@@ -11,7 +56,6 @@ Meteor.methods {
     Curriculum.remove {_id: curriculumId}, (err)->
       if err
         throw new Meteor.Error "mongo-error", err
-    
 
   # Takes in a curriculum id and data object and updates curriculum to match the data. If the update fails, an error is thrown. 
   updateCurriculum: (curriculumId, data)->
