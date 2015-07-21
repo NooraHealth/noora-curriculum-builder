@@ -10,16 +10,14 @@ Template.curriculumBuilder.events {
     event.preventDefault()
     lessonId = $(event.target).closest("table").attr "id"
     curriculum = Meteor.getCurrentCurriculum()
-    Meteor.call "deleteLessonFromS3", lessonId
-    Meteor.call "deleteLesson", lessonId, curriculum._id
+    Meteor.call "deleteLesson", lessonId, curriculum._id, false
   
   # Delete module
   "click .delete-module": (event, template)->
     event.preventDefault()
     moduleId = $(event.target).closest("tr").attr "id"
     lessonId = $(event.target).closest("table").attr "id"
-    Meteor.call "deleteModuleFromS3", moduleId
-    Meteor.call "deleteModule", moduleId, lessonId, (err)->
+    Meteor.call "deleteModule", moduleId, lessonId, false, (err)->
       if err
         Session.set "error-message", "There was an error deleting the module:", err
   
@@ -79,22 +77,6 @@ Template.curriculumBuilder.events {
       submitModule event
     resetForm()
 }
-###  
-  "click button[name=upload]":(event, template) ->
-    event.preventDefault()
-    inputs = $("input[type=file]")
-    for input in inputs
-      file = input.files[0]
-      console.log "Here are the files to input"
-      if file?
-        Meteor.call "uploadToS3", file
-    if ($(event.target).attr "id") is "submitLesson"
-      submitLesson event 
-    else if ($(event.target).attr "id") is "submitModule"
-      submitModule event
-    resetForm()
-}
-###
 
 Template.curriculumBuilder.onRendered ()->
   $("select").material_select()
@@ -144,8 +126,6 @@ submitLesson = (event)->
     order = currentOrder
     if order == -1
       order = numLessons
-  else if order > currentOrder
-    order += 1
   
   # if updating this lesson
   if oldLesson?
@@ -154,7 +134,7 @@ submitLesson = (event)->
       image = oldLesson.image
     if icon == ""
       icon = oldLesson.icon
-    Meteor.call "deleteLesson", oldLesson._id, curriculum._id
+    Meteor.call "deleteLesson", oldLesson._id, curriculum._id, true
 
   lessonId = Lessons.insert {
     title: title
@@ -194,8 +174,8 @@ submitModule = (event)->
     order = currentOrder
     if order == -1
       order = numModules
-  else if order > currentOrder
-    order += 1
+  #else if order > currentOrder
+  #  order += 1
 
   if type=="VIDEO" and !startTime
     startTime = 0
@@ -224,7 +204,7 @@ submitModule = (event)->
       incorrectAudio = oldModule.incorrect_audio
     if noOptionsInputted(options)
       options = oldModule.options
-    Meteor.call "deleteModule", oldModule._id, lesson._id
+    Meteor.call "deleteModule", oldModule._id, lesson._id, true
     
   if type=="MULTIPLE_CHOICE"  
     correctOptions = (options[index] for index in correctOptions)

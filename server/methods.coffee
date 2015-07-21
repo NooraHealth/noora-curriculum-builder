@@ -5,36 +5,49 @@
 Meteor.methods {
   deleteLessonFromS3: (lessonId)->
     lesson = Lessons.findOne({_id: lessonId})
-    console.log "lessonImage is #{lesson.image}"
-    console.log "lessonIcon is #{lesson.icon}"
-    s3.deleteObjects {Delete: {Objects: [{Key: lesson.image}, {Key: lesson.icon}] } }, (err, data)->
-      if err
-        console.log err
-      else
-        console.log data
+    objects = []
+    if lesson.image?
+      objects.push {Key: lesson.image}
+    if lesson.icon?
+      objects.push {Key: lesson.icon}
+    console.log "objects is"
+    console.log objects
+    if objects.length > 0
+      s3.deleteObjects {Delete: {Objects: objects} }, (err, data)->
+        if err
+          console.log err
+        else
+          console.log data
     return
   
   deleteModuleFromS3: (moduleId)->
     module = Modules.findOne({_id: moduleId})
-    console.log "ModuleImage is #{module.image}"
-    console.log "ModuleAudio is #{module.audio}"
-    console.log "ModuleIncorrectAudio is #{module.incorrect_audio}"
-    console.log "ModuleCorrectAudio is #{module.correct_audio}"
-    console.log "ModuleVideo is #{module.video}"
-    s3.deleteObjects {Delete: {Objects: [{Key: module.image}, {Key: module.audio}, {Key: module.incorrect_audio},
-    {Key: module.correct_audio}, {Key: module.video}] } }, (err, data)->
-      if err
-        console.log err
-      else
-        console.log data
+    objects = []
+    if module.image?
+      objects.push {Key: module.image}
+    if module.audio?
+      objects.push {Key: module.audio}
+    if module.incorrect_audio?
+      objects.push {Key: module.incorrect_audio}
+    if module.correct_audio?
+      objects.push {Key: module.correct_audio}
+    if module.video?
+      objects.push {Key: module.video}
+    console.log "objects is"
+    console.log objects
+    if objects.length > 0
+      s3.deleteObjects {Delete: {Objects: objects} }, (err, data)->
+        if err
+          console.log err
+        else
+          console.log data
     return
-    
   
   deleteCurriculum: (curriculumId)->
     curriculum = Curriculum.findOne {_id: curriculumId}
     lessons = curriculum.lessons
     for lesson in lessons 
-        Meteor.call "deleteLesson", lesson, curriculumId
+      Meteor.call "deleteLesson", lesson, curriculumId
     Curriculum.remove {_id: curriculumId}, (err)->
       if err
         throw new Meteor.Error "mongo-error", err
@@ -51,18 +64,22 @@ Meteor.methods {
 
   # Takes in a lesson id and deletes all the modules and the lesson. The curriculum is then updated. 
   # If lesson or curriculum documents are not found or if update fails, an error is thrown.
-  deleteLesson: (lessonId, curriculumId)->
+  deleteLesson: (lessonId, curriculumId, isUpdating)->
     check(lessonId, String)
     lesson = Lessons.findOne {_id: lessonId}
     if !lesson
       throw new Meteor.Error "document-not-found", "Lesson to delete could not be found"
     
+    if !isUpdating
+      Meteor.call "deleteLessonFromS3", lessonId
+    
     #delete the modules
-    Meteor.call "removeAllModules", lesson
+    Meteor.call "removeAllModules", lesson, isUpdating
     
     #delete the lesson
     Lessons.remove {_id: lessonId}
-    
+    console.log "deleted lesson"
+
     #remove from curriculum
     curriculum = Curriculum.findOne {_id: curriculumId}
     
@@ -80,10 +97,13 @@ Meteor.methods {
   # Takes in a module id and a lesson id. The module is removed from the Modules collection
   # and the Lessons collection is updated. If an error occurs in updating the lesson or removing 
   # the module, an error is thrown.
-  deleteModule: (moduleId, lessonId)->
+  deleteModule: (moduleId, lessonId, isUpdating)->
     check moduleId, String
     check lessonId, String
     lesson = Lessons.findOne {_id: lessonId}
+   
+    if !isUpdating
+      Meteor.call "deleteModuleFromS3", moduleId
     
     modules = lesson.modules
     newModules = (module for module in modules when module != moduleId)
@@ -101,15 +121,12 @@ Meteor.methods {
 
   # Takes in a lesson object and removes all of its modules. If an error occurs in finding the lesson 
   # or its modules or during removing, an error is thrown.
-  removeAllModules: (lesson)->
+  removeAllModules: (lesson, isUpdating)->
     if !lesson or !lesson.modules
       throw new Meteor.Error "document-not-found", "Error removing modules"
     
     for module in lesson.modules
-      Modules.remove {_id: module}, (err)->
-        if err
-          throw new Meteor.Error "mongo-err", err
-          console.log "Error removing module:", err
+      Meteor.call "deleteModule", module, lesson._id, isUpdating
 
   # Takes in a lesson id and module id and appends the module to the lesson by updating. If an error
   # occurs in updating, an error is thrown.
