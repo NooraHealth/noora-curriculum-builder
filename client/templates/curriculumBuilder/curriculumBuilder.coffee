@@ -10,14 +10,14 @@ Template.curriculumBuilder.events {
     event.preventDefault()
     lessonId = $(event.target).closest("table").attr "id"
     curriculum = Meteor.getCurrentCurriculum()
-    Meteor.call "deleteLesson", lessonId, curriculum._id, false
+    Meteor.call "deleteLesson", lessonId, curriculum._id, lessonFiles, moduleFiles
   
   # Delete module
   "click .delete-module": (event, template)->
     event.preventDefault()
     moduleId = $(event.target).closest("tr").attr "id"
     lessonId = $(event.target).closest("table").attr "id"
-    Meteor.call "deleteModule", moduleId, lessonId, false, (err)->
+    Meteor.call "deleteModule", moduleId, lessonId, moduleFiles, (err)->
       if err
         Session.set "error-message", "There was an error deleting the module:", err
   
@@ -90,12 +90,23 @@ Template.addModuleModal.events {
 ###
 # HELPER FUNCTIONS
 ###
+
+uploadCallback = (err, downloadURL)->
+  console.log "retrying upload"
+  if err
+    console.log "Error uploading file: ", err
+    console.log file
+    alert "A file failed to load! ", err
+  else
+    console.log "File uploaded: ", downloadURL
+    console.log Uploaders.find().count()
+    Uploaders.remove {_id: id}
+    console.log Uploaders.find().count()
+
 uploadFile = (uploader, file, id)->
   uploader.send file, (err, downloadURL)->
     if err
-      console.log "Error uploading file: ", err
-      console.log file
-      alert "A file failed to load! ", err
+      uploader.send file, uploadCallback()
     else
       console.log "File uploaded: ", downloadURL
       console.log Uploaders.find().count()
@@ -129,12 +140,19 @@ submitLesson = (event)->
   
   # if updating this lesson
   if oldLesson?
+    deleteFromLesson = []
     oldModules = oldLesson.modules
     if image == ""
       image = oldLesson.image
+    else if oldLesson.image?
+        deleteFromLesson.push "image"
     if icon == ""
       icon = oldLesson.icon
-    Meteor.call "deleteLesson", oldLesson._id, curriculum._id, true
+    else if oldLesson.icon? 
+      deleteFromLesson.push "icon"
+    console.log "deleteFromLesson"
+    console.log deleteFromLesson
+    Meteor.call "deleteLesson", oldLesson._id, curriculum._id, deleteFromLesson, []
 
   lessonId = Lessons.insert {
     title: title
@@ -174,8 +192,6 @@ submitModule = (event)->
     order = currentOrder
     if order == -1
       order = numModules
-  #else if order > currentOrder
-  #  order += 1
 
   if type=="VIDEO" and !startTime
     startTime = 0
@@ -192,19 +208,30 @@ submitModule = (event)->
 
   # if updating this module  
   if oldModule?
+    deleteFromModule = []
     if video == ""
       video = oldModule.video
+    else if oldModule.video? 
+      deleteFromModule.push "video"
     if image == ""
       image  = oldModule.image
+    else if oldModule.image? 
+      deleteFromModule.push "image"
     if audio == ""
       audio = oldModule.audio
+    else if oldModule.audio? 
+      deleteFromModule.push "audio"
     if correctAudio == ""
       correctAudio = oldModule.correct_audio
+    else if oldModule.correct_audio? 
+      deleteFromModule.push "correctAudio"
     if incorrectAudio == ""
       incorrectAudio = oldModule.incorrect_audio
+    else if oldModule.incorrect_audio? 
+      deleteFromModule.push "incorrectAudio"
     if noOptionsInputted(options)
       options = oldModule.options
-    Meteor.call "deleteModule", oldModule._id, lesson._id, true
+    Meteor.call "deleteModule", oldModule._id, lesson._id, deleteFromModule
     
   if type=="MULTIPLE_CHOICE"  
     correctOptions = (options[index] for index in correctOptions)
