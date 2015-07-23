@@ -57,11 +57,11 @@ ModuleSchema = new SimpleSchema
     type:String
     optional:true
     #regEx: /^([/]?\w+)+[.]mp4$/
-  start_time:
+  start:
     type:Number
     min: 0
     optional:true
-  end_time:
+  end:
     type:Number
     min: 0
     optional:true

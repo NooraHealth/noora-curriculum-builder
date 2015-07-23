@@ -20,7 +20,7 @@ Template.addLessonModal.helpers
   getTags: ()->
     lesson = Meteor.getCurrentLesson()
     if !lesson
-        return ""
+      return ""
     return lesson.tags
 
   getImage: ()->
@@ -77,15 +77,15 @@ Template.addModuleModal.helpers
 
   getStartTime: ()->
     module = Meteor.getCurrentModule()
-    if !module or !module.start_time
+    if !module or !module.start
       return "no start time"
-    return module.start_time
+    return module.start
   
   getEndTime: ()->
     module = Meteor.getCurrentModule()
-    if !module or !module.end_time
-      return ""
-    return module.end_time
+    if !module or !module.end
+      return "no end time"
+    return module.end
 
   isNew: ()->
     module = Meteor.getCurrentModule()
