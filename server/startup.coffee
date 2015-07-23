@@ -16,8 +16,12 @@ Meteor.startup ()->
 
     key:(file) ->
       return Meteor.filePrefix(file)
-
   }
 
+  AWS.config.update
+    region: REGION
+    apiVersion: '2006-03-01'
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 
-
+  @s3 = new AWS.S3({ params: {Bucket: bucket} })

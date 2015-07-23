@@ -10,14 +10,14 @@ Template.curriculumBuilder.events {
     event.preventDefault()
     lessonId = $(event.target).closest("table").attr "id"
     curriculum = Meteor.getCurrentCurriculum()
-    Meteor.call "deleteLesson", lessonId, curriculum._id
-
+    Meteor.call "deleteLesson", curriculum._id, lessonId, lessonFiles, moduleFiles
+  
   # Delete module
   "click .delete-module": (event, template)->
     event.preventDefault()
     moduleId = $(event.target).closest("tr").attr "id"
     lessonId = $(event.target).closest("table").attr "id"
-    Meteor.call "deleteModule", moduleId, lessonId, (err)->
+    Meteor.call "deleteModule", lessonId, moduleId, moduleFiles, (err)->
       if err
         Session.set "error-message", "There was an error deleting the module:", err
   
@@ -38,6 +38,9 @@ Template.curriculumBuilder.events {
   "click #updateLesson": (event, template)->
     lessonId = $(event.target).parent().parent().parent().parent().attr "id"
     Meteor.setCurrentLesson lessonId
+    lesson = Lessons.find {_id: lessonId}
+    console.log "lesson is"
+    console.log lesson.fetch()
     $("#addLessonModal").openModal()
 
   # Update module
@@ -46,6 +49,9 @@ Template.curriculumBuilder.events {
     moduleId = $(event.target).parent().parent().attr "id" 
     Meteor.setCurrentLesson lessonId
     Meteor.setCurrentModule moduleId
+    module = Modules.find {_id: moduleId}
+    console.log "module is"
+    console.log module.fetch()
     $("#addModuleModal").openModal() 
 
   # Select module type  
@@ -72,9 +78,11 @@ Template.curriculumBuilder.events {
         id = Uploaders.insert uploader
         uploadFile uploader, file, id
     if ($(event.target).attr "id") is "submitLesson"
-      submitLesson event 
+      submitLesson() 
     else if ($(event.target).attr "id") is "submitModule"
-      submitModule event
+      submitModule()
+    Meteor.setCurrentLesson "null"
+    Meteor.setCurrentModule "null"
     resetForm()
 }
 
@@ -93,14 +101,24 @@ Template.addModuleModal.events {
 uploadFile = (uploader, file, id)->
   uploader.send file, (err, downloadURL)->
     if err
-      console.log "Error uploading file: ", err
-      console.log file
-      alert "A file failed to load! ", err
+      uploader.send file, uploadCallback()
     else
       console.log "File uploaded: ", downloadURL
       console.log Uploaders.find().count()
       Uploaders.remove {_id: id}
       console.log Uploaders.find().count()
+
+uploadCallback = (err, downloadURL)->
+  console.log "retrying upload"
+  if err
+    console.log "Error uploading file: ", err
+    console.log file
+    alert "A file failed to load! ", err
+  else
+    console.log "File uploaded: ", downloadURL
+    console.log Uploaders.find().count()
+    Uploaders.remove {_id: id}
+    console.log Uploaders.find().count()
 
 resetForm = ()->
   addModuleModal = $("#addModuleModal")
@@ -108,180 +126,6 @@ resetForm = ()->
     $(input).slideUp()
   for input in $("input:not(.no-reset)")
     input.value = ""
-
-submitLesson = (event)->
-  curriculum = Meteor.getCurrentCurriculum()
-  oldLesson = Meteor.getCurrentLesson()
-  oldModules = []
-  
-  title = $("#lessonTitle").val()
-  order = $("#lessonOrder").val() - 1
-  tags = $("#lessonTags").val().split()
-  image = Meteor.filePrefix $("#lessonImage")[0].files[0]
-  icon = Meteor.filePrefix $("#lessonIcon")[0].files[0]
-  
-  numLessons = curriculum.lessons.length
-  currentOrder = curriculum.lessons.indexOf("#{oldLesson?._id}")
-  if order < 0 or order > numLessons - 1
-    order = currentOrder
-    if order == -1
-      order = numLessons
-  else if order > currentOrder
-    order += 1
-  
-  # if updating this lesson
-  if oldLesson?
-    oldModules = oldLesson.modules
-    if image == ""
-      image = oldLesson.image
-    if icon == ""
-      icon = oldLesson.icon
-    Meteor.call "deleteLesson", oldLesson._id, curriculum._id
-
-  lessonId = Lessons.insert {
-    title: title
-    tags: tags
-    image: image
-    icon: icon
-    modules: oldModules
-  }
-  Lessons.update {_id: lessonId}, {$set: {nh_id: lessonId}}
-  Meteor.call "appendLesson", curriculum._id, lessonId, order, (err)->
-    if err
-      Session.set "error-message", "There was an error adding the lesson:", err
-
-submitModule = (event)->
-  lesson = Meteor.getCurrentLesson()
-  oldModule = Meteor.getCurrentModule()
-  correctOptions = []
-  options = []
-  
-  question = $("#moduleQuestion").val()
-  title = $("#moduleTitle").val()
-  order = $("#moduleOrder").val() - 1
-  tags = $("#moduleTags").val().split()
-  type = $("#moduleType").val()
-  audio = Meteor.filePrefix $("#moduleAudio")[0].files[0]
-  correctAudio = Meteor.filePrefix $("#moduleCorrectAudio")[0].files[0]
-  incorrectAudio = Meteor.filePrefix $("#moduleIncorrectAudio")[0].files[0]
-  image =  Meteor.filePrefix $("#moduleImage")[0].files[0]
-  video =  Meteor.filePrefix $("#moduleVideo")[0].files[0]
-  videoUrl = $("#moduleVideoUrl").val()
-  startTime = $("#moduleStartTime").val()
-  endTime = $("#moduleEndTime").val()
-
-  numModules = lesson.modules.length
-  currentOrder = lesson.modules.indexOf("#{oldModule?._id}")
-  if order < 0 or order > numModules - 1
-    order = currentOrder
-    if order == -1
-      order = numModules
-  else if order > currentOrder
-    order += 1
-
-  if type=="VIDEO" and !startTime
-    startTime = 0
-  
-  if type=="SCENARIO"
-    correctOptions = [$("input[name=scenario_answer]:checked").attr "id"]
-    options = ["Normal" , "CallDoc", "Call911"]
-  if type=="BINARY"
-    correctOptions=  [$("input[name=binary_answer]:checked").attr "id"]
-    options = ["Yes", "No"]
-  if type=="MULTIPLE_CHOICE"
-    options = (Meteor.filePrefix input.files[0] for input in $("input[name=option]"))
-    correctOptions = (input.id for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
-
-  # if updating this module  
-  if oldModule?
-    if video == ""
-      video = oldModule.video
-    if image == ""
-      image  = oldModule.image
-    if audio == ""
-      audio = oldModule.audio
-    if correctAudio == ""
-      correctAudio = oldModule.correct_audio
-    if incorrectAudio == ""
-      incorrectAudio = oldModule.incorrect_audio
-    if noOptionsInputted(options)
-      options = oldModule.options
-    Meteor.call "deleteModule", oldModule._id, lesson._id
-    
-  if type=="MULTIPLE_CHOICE"  
-    correctOptions = (options[index] for index in correctOptions)
-
-  moduleErrorChecking(question, title, type, audio, correctAudio, incorrectAudio, image, video, videoUrl, correctOptions, options, endTime)
-  
-  moduleId = Modules.insert {
-    type: type
-    parent_lesson: lesson._id
-    correct_answer: correctOptions
-    title: title
-    question:question
-    tags: tags
-    options: options
-    video: video
-    video_url: videoUrl
-    start: startTime
-    end: endTime
-    image: image
-    audio: audio
-    correct_audio: correctAudio
-    incorrect_audio: incorrectAudio
-  }
-  Modules.update {_id: moduleId}, {$set: {nh_id: moduleId}}
-  Meteor.call "appendModule", lesson._id, moduleId, order, (err)->
-    if err
-      Session.set "error-message", "There was an error inserting the module into the database:", err
-
-isQuestion = (type)->
-  return type=="BINARY" or type=="SCENARIO" or type=="MULTIPLE_CHOICE"
-
-moduleErrorChecking =(question, title, type, audio, correctAudio, incorrectAudio, image, video, videoUrl, correctOptions, options, endTime)->
-  if !type
-    alert "Please identify a module type"
-    return
-
-  if !audio  and type != "VIDEO" 
-    alert "Missing module audio"
-    return
-
-  if !correctAudio and isQuestion(type)
-    alert "Missing correct audio"
-    return
-
-  if !incorrectAudio and isQuestion(type)
-    alert "Missing incorrect audio"
-    return
-
-  if !video and !videoUrl and type=="VIDEO"
-    alert "Missing the video file"
-    return
-
-  if !endTime and type=="VIDEO"
-    alert "Missing the end time for the video"
-    return
-
-  if !image and type!="VIDEO" and type!="MULTIPLE_CHOICE"
-    alert "Missing image file"
-    return
-
-  if !title and (type=="VIDEO" or type=="SLIDE")
-    alert "Missing title"
-    return
-
-  if !question and isQuestion(type)
-    alert "Missing question"
-    return
-
-  if isQuestion(type) and options.length==0
-    alert "Please specify any options"
-    return
-
-  if isQuestion(type) and correctOptions.length==0
-    alert "Please select the correct answer(s)"
-    return
 
 noOptionsInputted = (options)->
   notOptions = ["Normal", "CallDoc", "Call911", "Yes", "No"]
@@ -292,3 +136,217 @@ noOptionsInputted = (options)->
   if counter > 0
     return false
   return true
+
+isQuestion = (type)->
+  return type=="BINARY" or type=="SCENARIO" or type=="MULTIPLE_CHOICE"
+
+getOrder = (order, currentOrder, numElements)->
+  if order < 0 or order > numElements - 1
+    order = currentOrder
+    if order == -1
+      order = numElements
+  return order
+
+updateLessonFileUploads = (oldLesson, deleteFromLesson, params)->
+  deleteFromLesson = []
+  params.modules = oldLesson.modules
+  if params.image == ""
+    params.image = oldLesson.image
+  else if oldLesson.image?
+    deleteFromLesson.push "image"
+  if params.icon == ""
+    params.icon = oldLesson.icon
+  else if oldLesson.icon? 
+    deleteFromLesson.push "icon"
+  return deleteFromLesson
+
+updateModuleFileUploads = (oldModule, deleteFromModule, params)->
+  deleteFromModule = []
+  if params.video == ""
+    params.video = oldModule.video
+  else if oldModule.video? 
+    deleteFromModule.push "video"
+  if params.image == ""
+    params.image  = oldModule.image
+  else if oldModule.image? 
+    deleteFromModule.push "image"
+  if params.audio == ""
+    params.audio = oldModule.audio
+  else if oldModule.audio? 
+    deleteFromModule.push "audio"
+  if params.correct_audio == ""
+    params.correct_audio = oldModule.correct_audio
+  else if oldModule.correct_audio? 
+    deleteFromModule.push "correctAudio"
+  if params.incorrect_audio == ""
+    params.incorrect_audio = oldModule.incorrect_audio
+  else if oldModule.incorrect_audio? 
+    deleteFromModule.push "incorrectAudio"
+  if noOptionsInputted(params.options)
+    params.options = oldModule.options
+  if params.type == "MULTIPLE_CHOICE"  
+    correctOptionsIndex = (input.id for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
+    params.correct_answer = (params.options[index] for index in correctOptionsIndex)
+  return deleteFromModule
+
+updateModuleFieldsByType = (params)->
+  if params.type == "VIDEO" and !params.start
+    params.start = 0
+  if params.type == "SCENARIO"
+    params.correct_answers = [$("input[name=scenario_answer]:checked").attr "id"]
+    params.options = ["Normal" , "CallDoc", "Call911"]
+  if params.type == "BINARY"
+    params.correct_answers =  [$("input[name=binary_answer]:checked").attr "id"]
+    params.options = ["Yes", "No"]
+  if params.type == "MULTIPLE_CHOICE"
+    params.options = (Meteor.filePrefix input.files[0] for input in $("input[name=option]"))
+    params.correct_answers = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
+
+submitLesson = ()->
+  curriculum = Meteor.getCurrentCurriculum()
+  oldLesson = Meteor.getCurrentLesson() # is undefined if creating new lesson
+  currentOrder = curriculum.lessons.indexOf("#{oldLesson?._id}")
+  order = $("#lessonOrder").val() - 1
+  order = getOrder order, currentOrder, curriculum.lessons.length
+ 
+  params = {
+    title: $("#lessonTitle").val()
+    tags: $("#lessonTags").val().split()
+    image: Meteor.filePrefix $("#lessonImage")[0].files[0]
+    icon: Meteor.filePrefix $("#lessonIcon")[0].files[0]
+    modules: []
+  }
+
+  # if creating new lesson
+  if !oldLesson 
+    console.log params
+    # add new lesson to Lessons collection
+    lessonId = Lessons.insert params
+    Lessons.update {_id: lessonId}, {$set: {nh_id: lessonId}}
+    # add lesson to its curriculum
+    Meteor.call "addLessonToCurriculum", curriculum._id, lessonId, order, (err)->
+      if err
+        Session.set "error-message", "There was an error adding the lesson:", err
+  
+  # if updating lesson
+  else
+    deleteFromLesson = updateLessonFileUploads oldLesson, deleteFromLesson, params
+    # update file uploads
+    Meteor.call "deleteLessonFromS3", oldLesson, deleteFromLesson, (err)->
+      if err
+        Session.set "error-message", "There was an error updating the lesson:", err
+    # update order if necessary 
+    if order != currentOrder
+      Meteor.call "deleteLessonFromCurriculum", curriculum._id, oldLesson._id, (err)->
+        if err
+          Session.set "error-message", "There was an error updating the lesson:", err
+      Meteor.call "addLessonToCurriculum", curriculum._id, oldLesson._id, order, (err)->
+        if err
+          Session.set "error-message", "There was an error updating the lesson:", err
+    # update fields  
+    Lessons.update {_id: oldLesson._id}, {$set: params}
+  
+
+submitModule = ()->
+  lesson = Meteor.getCurrentLesson()
+  oldModule = Meteor.getCurrentModule() # is undefined if creating a new module
+  currentOrder = lesson.modules.indexOf("#{oldModule?._id}")
+  order = $("#moduleOrder").val() - 1
+  order = getOrder order, currentOrder, lesson.modules.length
+  
+  params = { 
+    parent_lesson: lesson._id
+    question: $("#moduleQuestion").val()
+    title: $("#moduleTitle").val()
+    tags: $("#moduleTags").val().split()
+    type: $("#moduleType").val()
+    audio: Meteor.filePrefix $("#moduleAudio")[0].files[0]
+    correct_audio: Meteor.filePrefix $("#moduleCorrectAudio")[0].files[0]
+    incorrect_audio: Meteor.filePrefix $("#moduleIncorrectAudio")[0].files[0]
+    image:  Meteor.filePrefix $("#moduleImage")[0].files[0]
+    video:  Meteor.filePrefix $("#moduleVideo")[0].files[0]
+    videoUrl: $("#moduleVideoUrl").val()
+    start: $("#moduleStartTime").val()
+    end: $("#moduleEndTime").val()
+    options: []
+    correct_answer: []
+  }
+
+  updateModuleFieldsByType params
+
+  # if creating new module
+  if !oldModule
+    moduleErrorChecking params
+    # add module to Modules collection
+    moduleId = Modules.insert params
+    Modules.update {_id: moduleId}, {$set: {nh_id: moduleId}}
+    # add module to its lesson 
+    Meteor.call "addModuleToLesson", lesson._id, moduleId, order, (err)->
+      if err
+        Session.set "error-message", "There was an error adding the module:", err
+
+  # if updating this module  
+  else
+    deleteFromModule = updateModuleFileUploads oldModule, deleteFromModule, params
+    moduleErrorChecking params
+    # update file uploads
+    Meteor.call "deleteModuleFromS3", oldModule, deleteFromModule, (err)->
+      if err
+        Session.set "error-message", "There was an error updating the module:", err
+    # update order if necessary 
+    if order != currentOrder
+      Meteor.call "deleteModuleFromLesson", lesson._id, oldModule._id, (err)->
+        if err
+          Session.set "error-message", "There was an error updating the module:", err
+      Meteor.call "addModuleToLesson", lesson._id, oldModule._id, order, (err)->
+        if err
+          Session.set "error-message", "There was an error updating the module:", err
+    # update fields  
+    Modules.update {_id: oldModule._id}, {$set: params}
+
+moduleErrorChecking = (params)->
+  if !params.type
+    alert "Please identify a module type"
+    return
+
+  if !params.audio  and params.type != "VIDEO" 
+    alert "Missing module audio"
+    return
+
+  if !params.correct_audio and isQuestion(params.type)
+    alert "Missing correct audio"
+    return
+
+  if !params.incorrect_audio and isQuestion(params.type)
+    alert "Missing incorrect audio"
+    return
+
+  if !params.video and !params.videoUrl and params.type=="VIDEO"
+    alert "Missing the video file"
+    return
+
+  if !params.end and params.type=="VIDEO"
+    alert "Missing the end time for the video"
+    return
+
+  if !params.image and params.type!="VIDEO" and params.type!="MULTIPLE_CHOICE"
+    alert "Missing image file"
+    return
+
+  if !params.title and (params.type=="VIDEO" or params.type=="SLIDE")
+    alert "Missing title"
+    return
+
+  if !params.question and isQuestion(params.type)
+    alert "Missing question"
+    return
+
+  if isQuestion(params.type) and params.options.length==0
+    alert "Please specify any options"
+    return
+
+  if isQuestion(params.type) and params.correct_answer.length==0
+    alert "Please select the correct answer(s)"
+    return
+
+
