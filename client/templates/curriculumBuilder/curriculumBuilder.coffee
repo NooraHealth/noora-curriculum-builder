@@ -193,14 +193,14 @@ updateModuleFieldsByType = (params)->
   if params.type == "VIDEO" and !params.start
     params.start = 0
   if params.type == "SCENARIO"
-    params.correct_answers = [$("input[name=scenario_answer]:checked").attr "id"]
+    params.correct_answer = [$("input[name=scenario_answer]:checked").attr "id"]
     params.options = ["Normal" , "CallDoc", "Call911"]
   if params.type == "BINARY"
-    params.correct_answers =  [$("input[name=binary_answer]:checked").attr "id"]
+    params.correct_answer =  [$("input[name=binary_answer]:checked").attr "id"]
     params.options = ["Yes", "No"]
   if params.type == "MULTIPLE_CHOICE"
     params.options = (Meteor.filePrefix input.files[0] for input in $("input[name=option]"))
-    params.correct_answers = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
+    params.correct_answer = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
 
 submitLesson = ()->
   curriculum = Meteor.getCurrentCurriculum()
