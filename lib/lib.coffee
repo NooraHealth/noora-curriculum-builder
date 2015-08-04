@@ -50,6 +50,6 @@ Meteor.filePrefix = (file)->
     prefix = CONTENT_FOLDER + AUDIO_FOLDER
   if file.type.match /// image/ ///
     prefix = CONTENT_FOLDER + IMAGE_FOLDER
-
-  return prefix + file.name
+  filename = (file.name).replace(/\s+/g, '')
+  return prefix + filename
 

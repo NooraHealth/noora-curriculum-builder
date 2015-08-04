@@ -76,6 +76,7 @@ Template.curriculumBuilder.events {
       if file?
         uploader = new Slingshot.Upload "s3"
         id = Uploaders.insert uploader
+        console.log "uploader id is #{id}"
         uploadFile uploader, file, id
     if ($(event.target).attr "id") is "submitLesson"
       submitLesson() 
