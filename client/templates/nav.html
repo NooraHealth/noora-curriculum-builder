@@ -1,10 +1,10 @@
 <template name="nav">
-  <tile class="brand-tile">
-    <a href="{{pathFor 'home'}}"><img class="z-depth-2" alt="Noora Health" src="/NHlogo.png"/></a>
-  </tile>
 
   <nav>
     <div class="nav-wrapper">
+      <tile class="brand-tile">
+        <a href="{{pathFor 'home'}}"><img alt="Noora Health" src="/NHlogo.png"/></a>
+      </tile>
       <ul class="right">
         <li><a href="{{pathFor 'selectCurriculum'}}">Select A Curriculum To Edit</a></li>
         <li><a onClick="Meteor.logout()"><i class="mdi-action-exit-to-app"></i></a></li>
