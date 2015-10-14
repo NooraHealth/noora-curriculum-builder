@@ -16,7 +16,7 @@ Meteor.methods {
   deleteCurriculum: (curriculumId)->
     curriculum = Curriculum.findOne {_id: curriculumId}
     lessons = curriculum.lessons
-    for lessonId in lessons 
+    for lessonId in lessons
       Meteor.call "deleteLesson", curriculumId, lessonId, lessonFiles, moduleFiles
     Curriculum.remove {_id: curriculumId}, (err)->
       if err
@@ -44,7 +44,7 @@ Meteor.methods {
       objects.push {Key: lesson.image}
     if lesson.icon? and ("icon" in deleteFromLesson)
       objects.push {Key: lesson.icon}
-    if (objects.length > 0) 
+    if (objects.length > 0)
       objects = notBeingUsed(lesson, objects)
       s3.deleteObjects {Delete: {Objects: objects} }, (err, data)->
         if err
