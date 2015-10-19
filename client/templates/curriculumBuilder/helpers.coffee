@@ -10,7 +10,7 @@ Template.lessonListItem.helpers
   modulesInLesson: ()->
     return @.getModulesSequence()
 
-Template.addLessonModal.helpers 
+Template.addLessonModal.helpers
   getTitle: ()->
     lesson = Meteor.getCurrentLesson()
     if !lesson
@@ -35,7 +35,7 @@ Template.addLessonModal.helpers
       return "No previous upload"
     return lesson.icon
 
-Template.addModuleModal.helpers 
+Template.addModuleModal.helpers
   isCorrectlySelected0:()->
     return getSelection(0)
   
