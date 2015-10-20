@@ -27,7 +27,8 @@ Meteor.setCurrentModule = (moduleId)->
 # Returns the current module.
 Meteor.getCurrentModule = ()->
   moduleId = Session.get "current module"
-  return Modules.findOne {_id: moduleId}
+  module = Modules.findOne {_id: moduleId}
+  return module
 
 # Returns the stub curriculum if it exists. If not, the stub curriculum is created
 # and inserted into the Curriculm collection and returned. The stub curriculum is

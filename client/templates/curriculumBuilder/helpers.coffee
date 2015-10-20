@@ -54,6 +54,22 @@ Template.addModuleModal.helpers
   isCorrectlySelected5:()->
     return getSelection(5)
   
+  isCorrectOption: ( index )->
+    console.log "Getting the correct option"
+    console.log index
+    module = Meteor.getCurrentModule()
+    console.log module
+    if not module
+      return false
+
+    option = getOption index
+    console.log option
+    console.log option in module.correct_answer
+    if option in module.correct_answer
+      return true
+    else
+      return false
+
   getPrevOption0: ()->
     return getOption(0)
  
@@ -158,9 +174,10 @@ Template.addModuleModal.helpers
 
   getVideoUrl: ()->
     module = Meteor.getCurrentModule()
-    if !module 
+    if not module
       return ""
-    return module.video_url
+    else
+      return module.video_url
 
 Template.curriculumBuilder.helpers
 # Returns the current curriculum's title
