@@ -11,8 +11,8 @@ Router.map ()->
       currentCurriculum = Session.get "current curriculum"
       if !currentCurriculum
         Router.go 'selectCurriculum'
-      else
-        this.next()
+      
+      this.next()
     data: ()->
       uploaders = Uploaders.find({})
       return {uploaders: uploaders}

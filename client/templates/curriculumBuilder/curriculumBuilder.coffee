@@ -46,13 +46,13 @@ Template.curriculumBuilder.events {
   # Update module
   "click #updateModule": (event, template)->
     lessonId = $(event.target).parent().parent().parent().attr "id"
-    moduleId = $(event.target).parent().parent().attr "id" 
+    moduleId = $(event.target).parent().parent().attr "id"
     Meteor.setCurrentLesson lessonId
     Meteor.setCurrentModule moduleId
     module = Modules.find {_id: moduleId}
     console.log "module is"
     console.log module.fetch()
-    $("#addModuleModal").openModal() 
+    $("#addModuleModal").openModal()
 
   # Select module type  
   "change #moduleType": (event, template) ->
@@ -79,7 +79,7 @@ Template.curriculumBuilder.events {
         console.log "uploader id is #{id}"
         uploadFile uploader, file, id
     if ($(event.target).attr "id") is "submitLesson"
-      submitLesson() 
+      submitLesson()
     else if ($(event.target).attr "id") is "submitModule"
       submitModule()
     Meteor.setCurrentLesson "null"
@@ -127,6 +127,8 @@ resetForm = ()->
     $(input).slideUp()
   for input in $("input:not(.no-reset)")
     input.value = ""
+  for input in $("input[name=option_selected]")
+    $(input).prop "checked", false
 
 noOptionsInputted = (options)->
   notOptions = ["Normal", "CallDoc", "Call911", "Yes", "No"]
@@ -157,7 +159,7 @@ updateLessonFileUploads = (oldLesson, deleteFromLesson, params)->
     deleteFromLesson.push "image"
   if params.icon == ""
     params.icon = oldLesson.icon
-  else if oldLesson.icon? 
+  else if oldLesson.icon?
     deleteFromLesson.push "icon"
   return deleteFromLesson
 
@@ -165,28 +167,28 @@ updateModuleFileUploads = (oldModule, deleteFromModule, params)->
   deleteFromModule = []
   if params.video == ""
     params.video = oldModule.video
-  else if oldModule.video? 
+  else if oldModule.video?
     deleteFromModule.push "video"
   if params.image == ""
     params.image  = oldModule.image
-  else if oldModule.image? 
+  else if oldModule.image?
     deleteFromModule.push "image"
   if params.audio == ""
     params.audio = oldModule.audio
-  else if oldModule.audio? 
+  else if oldModule.audio?
     deleteFromModule.push "audio"
   if params.correct_audio == ""
     params.correct_audio = oldModule.correct_audio
-  else if oldModule.correct_audio? 
+  else if oldModule.correct_audio?
     deleteFromModule.push "correctAudio"
   if params.incorrect_audio == ""
     params.incorrect_audio = oldModule.incorrect_audio
-  else if oldModule.incorrect_audio? 
+  else if oldModule.incorrect_audio?
     deleteFromModule.push "incorrectAudio"
   if noOptionsInputted(params.options)
     params.options = oldModule.options
-  if params.type == "MULTIPLE_CHOICE"  
-    correctOptionsIndex = (input.id for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
+  if params.type == "MULTIPLE_CHOICE"
+    correctOptionsIndex = (input.id for input in $("input[name=option_selected]:checked"))
     params.correct_answer = (params.options[index] for index in correctOptionsIndex)
   return deleteFromModule
 
@@ -201,7 +203,8 @@ updateModuleFieldsByType = (params)->
     params.options = ["Yes", "No"]
   if params.type == "MULTIPLE_CHOICE"
     params.options = (Meteor.filePrefix input.files[0] for input in $("input[name=option]"))
-    params.correct_answer = (Meteor.filePrefix input.files[0] for input in $("input[name=option]") when $(input).closest("div").hasClass 'correctly_selected')
+    correctOptionsIndex = (input.id for input in $("input[name=option_selected]:checked"))
+    params.correct_answer = (params.options[index] for index in correctOptionsIndex)
 
 submitLesson = ()->
   curriculum = Meteor.getCurrentCurriculum()
@@ -255,7 +258,7 @@ submitModule = ()->
   order = $("#moduleOrder").val() - 1
   order = getOrder order, currentOrder, lesson.modules.length
   
-  params = { 
+  params = {
     parent_lesson: lesson._id
     question: $("#moduleQuestion").val()
     title: $("#moduleTitle").val()
@@ -304,6 +307,7 @@ submitModule = ()->
           Session.set "error-message", "There was an error updating the module:", err
     # update fields  
     Modules.update {_id: oldModule._id}, {$set: params}
+    console.log "NEW MODULE", Modules.findOne {_id: oldModule._id}
 
 moduleErrorChecking = (params)->
   if !params.type
