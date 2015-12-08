@@ -46,6 +46,7 @@ Meteor.methods {
       objects.push {Key: lesson.icon}
     if (objects.length > 0)
       objects = notBeingUsed(lesson, objects)
+      console.log "About to delete the objects", objects
       s3.deleteObjects {Delete: {Objects: objects} }, (err, data)->
         if err
           console.log err
@@ -103,11 +104,12 @@ Meteor.methods {
       objects.push {Key: module.video}
     if (objects.length > 0)
       objects = notBeingUsed(module, objects)
-      s3.deleteObjects {Delete: {Objects: objects} }, (err, data)->
-        if err
-          console.log err
-        else
-          console.log data
+      if objects.length > 0
+        s3.deleteObjects {Delete: {Objects: objects} }, (err, data)->
+          if err
+            console.log err
+          else
+            console.log data
     return
   
   deleteModuleFromLesson: (lessonId, moduleId)->
@@ -172,7 +174,7 @@ notBeingUsed = (currentObject, filesToDelete)->
   
   
   allModuleObjects = Modules.find()
-  allModuleObjects.forEach (moduleObject)->  
+  allModuleObjects.forEach (moduleObject)->
     for file, index in filesToDelete by -1
       if (moduleObject._id != currentObject._id) and ((moduleObject.image == file.Key) or (moduleObject.audio == file.Key) or (moduleObject.incorrect_audio == file.Key) or (moduleObject.correct_audio == file.Key) or (moduleObject.video == file.Key))
         console.log "#{file.Key} is being used by module titled #{moduleObject.title}"

@@ -108,6 +108,8 @@ uploadFile = (uploader, file, id)->
       console.log Uploaders.find().count()
       Uploaders.remove {_id: id}
       console.log Uploaders.find().count()
+      if Uploaders.find().count() == 0
+        sweetAlert("Files uploaded!")
 
 uploadCallback = (err, downloadURL)->
   console.log "retrying upload"
@@ -222,7 +224,7 @@ submitLesson = ()->
   }
 
   # if creating new lesson
-  if !oldLesson 
+  if !oldLesson
     console.log params
     # add new lesson to Lessons collection
     lessonId = Lessons.insert params
