@@ -100,6 +100,8 @@ Template.addModuleModal.events {
 # HELPER FUNCTIONS
 ###
 uploadFile = (uploader, file, id)->
+  console.log "FILE"
+  console.log file
   uploader.send file, (err, downloadURL)->
     if err
       uploader.send file, uploadCallback()
@@ -214,6 +216,7 @@ submitLesson = ()->
   currentOrder = curriculum.lessons.indexOf("#{oldLesson?._id}")
   order = $("#lessonOrder").val() - 1
   order = getOrder order, currentOrder, curriculum.lessons.length
+  now = new Date().getTime()
  
   params = {
     title: $("#lessonTitle").val()
@@ -221,7 +224,9 @@ submitLesson = ()->
     image: Meteor.filePrefix $("#lessonImage")[0].files[0]
     icon: Meteor.filePrefix $("#lessonIcon")[0].files[0]
     modules: []
+    last_modified: now
   }
+  console.log "PARAMS!"
 
   # if creating new lesson
   if !oldLesson
@@ -251,6 +256,7 @@ submitLesson = ()->
           Session.set "error-message", "There was an error updating the lesson:", err
     # update fields  
     Lessons.update {_id: oldLesson._id}, {$set: params}
+    console.log Lessons.findOne {_id: oldLesson._id}
   
 
 submitModule = ()->
@@ -259,7 +265,8 @@ submitModule = ()->
   currentOrder = lesson.modules.indexOf("#{oldModule?._id}")
   order = $("#moduleOrder").val() - 1
   order = getOrder order, currentOrder, lesson.modules.length
-  
+  now = new Date().getTime()
+   
   params = {
     parent_lesson: lesson._id
     question: $("#moduleQuestion").val()
@@ -276,6 +283,7 @@ submitModule = ()->
     end: $("#moduleEndTime").val()
     options: []
     correct_answer: []
+    last_modified: now
   }
 
   updateModuleFieldsByType params

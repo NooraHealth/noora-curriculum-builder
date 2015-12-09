@@ -52,6 +52,9 @@ ModuleSchema = new SimpleSchema
     type:String
     optional:true
   
+  last_modified:
+    type: String
+    optional: true
   #VIDEO MODULE
   video:
     type:String
