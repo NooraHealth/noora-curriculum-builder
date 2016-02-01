@@ -117,12 +117,14 @@ uploadCallback = ( id )->
     if err
       console.log "Error uploading file: ", err
       console.log file
-      alert "A file failed to load! ", err
+      sweetAlert("Ru Roh", "File failed to load!"+err, "error")
     else
       console.log "File uploaded: ", downloadURL
       console.log Uploaders.find().count()
       Uploaders.remove {_id: id}
       console.log Uploaders.find().count()
+      if Uploaders.find().count() == 0
+        sweetAlert("Files uploaded!")
 
 resetForm = ()->
   addModuleModal = $("#addModuleModal")
