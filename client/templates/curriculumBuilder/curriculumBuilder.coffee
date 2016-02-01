@@ -1,6 +1,4 @@
-###
-# Event handlers for adding and deleting lessons and modules.
-# Templates involved: curriculumBuilder in curriculumBuilder.html
+### # Event handlers for adding and deleting lessons and modules.  # Templates involved: curriculumBuilder in curriculumBuilder.html
 # and addLessonModal and addModuleModal in addModals.html
 ###
 
@@ -104,7 +102,7 @@ uploadFile = (uploader, file, id)->
   console.log file
   uploader.send file, (err, downloadURL)->
     if err
-      uploader.send file, uploadCallback()
+      uploader.send file, uploadCallback( id )
     else
       console.log "File uploaded: ", downloadURL
       console.log Uploaders.find().count()
@@ -113,17 +111,18 @@ uploadFile = (uploader, file, id)->
       if Uploaders.find().count() == 0
         sweetAlert("Files uploaded!")
 
-uploadCallback = (err, downloadURL)->
-  console.log "retrying upload"
-  if err
-    console.log "Error uploading file: ", err
-    console.log file
-    alert "A file failed to load! ", err
-  else
-    console.log "File uploaded: ", downloadURL
-    console.log Uploaders.find().count()
-    Uploaders.remove {_id: id}
-    console.log Uploaders.find().count()
+uploadCallback = ( id )->
+  return ( err, downloadURL)=>
+    console.log "retrying upload"
+    if err
+      console.log "Error uploading file: ", err
+      console.log file
+      alert "A file failed to load! ", err
+    else
+      console.log "File uploaded: ", downloadURL
+      console.log Uploaders.find().count()
+      Uploaders.remove {_id: id}
+      console.log Uploaders.find().count()
 
 resetForm = ()->
   addModuleModal = $("#addModuleModal")
