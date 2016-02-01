@@ -1,5 +1,6 @@
 Meteor.startup ()->
   bucket = Meteor.call "getBucket"
+  console.log "the bucket", bucket
   Slingshot.createDirective "s3", Slingshot.S3Storage, {
     bucket: bucket,
     acl: "public-read",
