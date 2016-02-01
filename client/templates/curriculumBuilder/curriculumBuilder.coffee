@@ -68,6 +68,8 @@ Template.curriculumBuilder.events {
   "click button[name=upload]":(event, template) ->
     event.preventDefault()
     inputs = $("input[type=file]")
+    console.log("Upload is clicked, about to UPload")
+    console.table inputs
     for input in inputs
       file = input.files[0]
       console.log "Here are the files to input"
@@ -75,6 +77,7 @@ Template.curriculumBuilder.events {
         uploader = new Slingshot.Upload "s3"
         id = Uploaders.insert uploader
         console.log "uploader id is #{id}"
+        console.log "About to upload file", file
         uploadFile uploader, file, id
     if ($(event.target).attr "id") is "submitLesson"
       submitLesson()
@@ -100,9 +103,9 @@ Template.addModuleModal.events {
 uploadFile = (uploader, file, id)->
   console.log "FILE"
   console.log file
-  uploader.send file, (err, downloadURL)->
+  uploader.send file, (err, downloadURL)=>
     if err
-      uploader.send file, uploadCallback( id )
+      uploader.send file, uploadCallback( id, file )
     else
       console.log "File uploaded: ", downloadURL
       console.log Uploaders.find().count()
@@ -116,8 +119,7 @@ uploadCallback = ( id )->
     console.log "retrying upload"
     if err
       console.log "Error uploading file: ", err
-      console.log file
-      sweetAlert("Ru Roh", "File failed to load!"+err, "error")
+      sweetAlert("Ru Roh", "File failed to load!"+err + "FILE: " + file, "error")
     else
       console.log "File uploaded: ", downloadURL
       console.log Uploaders.find().count()
@@ -325,7 +327,7 @@ moduleErrorChecking = (params)->
     alert "Please identify a module type"
     return
 
-  if !params.audio  and params.type != "VIDEO" 
+  if !params.audio  and params.type != "VIDEO"
     alert "Missing module audio"
     return
 

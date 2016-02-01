@@ -1,6 +1,10 @@
 Meteor.startup ()->
   bucket = Meteor.call "getBucket"
-  console.log "the bucket", bucket
+  console.log "ID", process.env.AWS_ACCESS_KEY_ID
+  console.log "KEY", process.env.AWS_SECRET_ACCESS_KEY
+  console.log bucket
+  console.log REGION
+
   Slingshot.createDirective "s3", Slingshot.S3Storage, {
     bucket: bucket,
     acl: "public-read",
@@ -16,6 +20,7 @@ Meteor.startup ()->
       return true
 
     key:(file) ->
+      console.log "Returning the key: ", Meteor.filePrefix(file)
       return Meteor.filePrefix(file)
   }
 
