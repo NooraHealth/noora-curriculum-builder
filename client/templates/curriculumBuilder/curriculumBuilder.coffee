@@ -103,6 +103,7 @@ Template.addModuleModal.events {
 uploadFile = (uploader, file, id)->
   console.log "FILE"
   console.log file
+  console.log uploader
   uploader.send file, (err, downloadURL)=>
     if err
       uploader.send file, uploadCallback( id, file )
