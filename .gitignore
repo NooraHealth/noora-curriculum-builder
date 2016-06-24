@@ -1,3 +1,5 @@
 ./public/
+*.swp
+*.swo
 mup.json
 vicki.pem
