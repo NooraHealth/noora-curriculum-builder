@@ -19,11 +19,9 @@ CurriculumSchema = new SimpleSchema
   condition:
     type:String
     min:0
-  nh_id:
-    optional:true  
-    type:String
-    min:0
-    
+  last_updated:
+    type: Date
+
 Curriculum.attachSchema CurriculumSchema
     
 Curriculum.helpers {

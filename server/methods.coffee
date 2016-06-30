@@ -5,7 +5,7 @@
 Meteor.methods {
   # Takes in a curriculum id and data object and updates curriculum to match the data. If the update fails, an error is thrown. 
   updateCurriculum: (curriculumId, data)->
-    Curriculum.update {_id: curriculumId}, {$set:{title: data.title, lessons:data.lessons, contentSrc: data.contentSrc, condition: data.condition}}, (err)->
+    Curriculum.update {_id: curriculumId}, {$set:{last_updated: data.last_updated, title: data.title, lessons:data.lessons, contentSrc: data.contentSrc, condition: data.condition}}, (err)->
       if err
         throw new Meteor.Error "mongo-error", err
 

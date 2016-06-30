@@ -7,6 +7,7 @@ Template.submitCurriculum.events {
   "click #submitCurriculum": (event, template) ->
     title = $("#curriculumTitle").val()
     condition = $("#condition").val()
+    now = new Date()
 
     if !title
       alert "Please identify a title for your curriculum"
@@ -31,6 +32,7 @@ Template.submitCurriculum.events {
         title:title
         lessons: lessonIds
         condition: condition
+        last_updated: now
       }
      
       Meteor.call "updateCurriculum", curriculum._id, data, (err)->
